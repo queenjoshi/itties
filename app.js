@@ -37,6 +37,62 @@ const signatureLooks = {
   noir:  { name: 'Noir',  traits: [4, 4, 2, 0, 4, 0, 5] }
 };
 
+const fashionTraitCategories = [
+  { key: 'background', label: 'Background', options: [
+    { id: 'bg_01', name: 'Neo-Tokyo Rain Alley', type: 'environment' },
+    { id: 'bg_02', name: 'House of Joshi Blueprint Grid', type: 'environment' },
+    { id: 'bg_03', name: 'Cyberpunk Runway', type: 'environment' },
+    { id: 'bg_04', name: 'The Vault / Lab Core', type: 'environment' },
+    { id: 'bg_05', name: 'Sunset Vaporwave Horizon', type: 'environment' }
+  ] },
+  { key: 'hairColor', label: 'Hair color', options: [
+    { id: 'hair_01', name: 'Obsidian Black' }, { id: 'hair_02', name: 'Cyber Blue' },
+    { id: 'hair_03', name: 'Acid Purple' }, { id: 'hair_04', name: 'Platinum Silver' },
+    { id: 'hair_05', name: 'Sunset Pink' }
+  ] },
+  { key: 'lipColor', label: 'Lip color', options: [
+    { id: 'lip_01', name: 'Glossy Crimson' }, { id: 'lip_02', name: 'Electric Magenta' },
+    { id: 'lip_03', name: 'Dark Velvet Plum' }, { id: 'lip_04', name: 'Neon Cyan' },
+    { id: 'lip_05', name: 'Matte Nude' }
+  ] },
+  { key: 'apparelFemale', label: 'Apparel · female archetype', options: [
+    { id: 'app_f_01', name: 'Flowy Sundress (Tropical Neon)' }, { id: 'app_f_02', name: 'Cherry Blossom Noir' },
+    { id: 'app_f_03', name: 'Geometric Prism' }, { id: 'app_f_04', name: 'Statement Crop & Skirt' },
+    { id: 'app_f_05', name: 'Neon Bodysuit w/ Mesh' }
+  ] }
+];
+const fashionTraitSelections = Object.fromEntries(fashionTraitCategories.map(category => [category.key, 0]));
+
+function renderFashionWorkbench() {
+  const grid = document.querySelector('#fashionTraitGrid');
+  if (!grid) return;
+  grid.replaceChildren(...fashionTraitCategories.map(category => {
+    const field = document.createElement('fieldset');
+    field.className = 'fashion-trait-category';
+    const legend = document.createElement('legend'); legend.textContent = category.label;
+    const select = document.createElement('select'); select.dataset.category = category.key;
+    select.setAttribute('aria-label', category.label);
+    category.options.forEach((option, index) => {
+      const item = document.createElement('option'); item.value = String(index); item.textContent = `${option.name} · ${option.id}`; select.append(item);
+    });
+    select.addEventListener('change', () => {
+      fashionTraitSelections[category.key] = Number(select.value);
+      updateFashionSummary();
+    });
+    field.append(legend, select);
+    const id = document.createElement('small'); id.className = 'fashion-trait-id'; id.textContent = `TRAIT KEY · ${category.key}`;
+    field.append(id);
+    return field;
+  }));
+  updateFashionSummary();
+}
+
+function updateFashionSummary() {
+  const summary = document.querySelector('#fashionSummary');
+  if (!summary) return;
+  summary.textContent = fashionTraitCategories.map(category => category.options[fashionTraitSelections[category.key]].name).join(' · ');
+}
+
 // Character concepts based on the supplied ecosystem directive. Mint-time
 // birth data remains blank until a token ID and block timestamp exist.
 const dossiers = [
@@ -187,6 +243,19 @@ ui.signatures?.addEventListener('click', event => {
   if (currentToken) {
     ui.saveFeedback.textContent = `${look.name} look selected. Adjust any layer, then save it to your on-chain wardrobe.`;
     ui.save.disabled = currentToken.retired;
+  }
+});
+
+document.querySelector('#copyFashionLook')?.addEventListener('click', async () => {
+  const feedback = document.querySelector('#fashionFeedback');
+  try {
+    await navigator.clipboard.writeText(fashionTraitCategories.map(category => {
+      const option = category.options[fashionTraitSelections[category.key]];
+      return `${category.label}: ${option.name} (${option.id})`;
+    }).join('\n'));
+    feedback.textContent = 'Fashion concept copied.';
+  } catch {
+    feedback.textContent = 'Clipboard access is unavailable in this browser.';
   }
 });
 
@@ -423,6 +492,7 @@ if (window.ethereum?.on) {
 }
 
 renderCategory();
+renderFashionWorkbench();
 renderDossiers();
 setWalletLabel();
 ui.mint.disabled = true;

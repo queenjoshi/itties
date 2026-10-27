@@ -74,6 +74,12 @@
       <div class="lab-door"><div class="door-mark">02</div><div class="door-copy"><strong>THE LAB DOOR</strong><span>Enter an Itty token ID owned by your connected wallet.</span></div><form id="unlockForm"><label class="sr-only" for="tokenIdInput">Itty token ID</label><span>#</span><input id="tokenIdInput" type="number" min="1" placeholder="Token ID" required><button id="unlockItty" type="submit" disabled>Unlock workbench <span>↗</span></button></form><p id="labFeedback" class="lab-feedback" aria-live="polite">Connect a wallet to access your Itties.</p></div>
       <div class="lab-content" id="labContent" hidden>
         <div class="lab-status"><span class="status-dot"></span><span id="activeTokenLabel">WORKBENCH OPEN · #1</span><span id="tokenStateLabel">FIRST BUILD · FREE</span><button id="lockLab" type="button" class="text-button">Lock workbench</button></div>
+      <div class="fashion-workbench" id="fashionWorkbench">
+        <div class="fashion-head"><p class="trait-kicker">FASHION ARCHETYPE · CONCEPT BUILDER</p><p>Explore the directive’s fashion traits. These selections are a visual concept and are not saved on-chain by the current contract.</p></div>
+        <div class="fashion-trait-grid" id="fashionTraitGrid"></div>
+        <div class="fashion-summary"><span>CONCEPT LOOK</span><strong id="fashionSummary">Neo-Tokyo Rain Alley · Obsidian Black · Glossy Crimson · Flowy Sundress (Tropical Neon)</strong><button type="button" id="copyFashionLook">Copy look</button></div>
+        <p class="fashion-feedback" id="fashionFeedback" aria-live="polite"></p>
+      </div>
       <div class="signature-looks">
         <div class="signature-head"><p class="trait-kicker">SIGNATURE LOOKS</p><p>Start from one of the three pencil directions, then adjust each trait below.</p></div>
         <div class="signature-grid" id="signatureLooks" role="group" aria-label="Choose a signature Itty look">

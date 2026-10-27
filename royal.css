@@ -277,8 +277,24 @@ footer{background:#13091e;border-color:#60355d;color:#cdb3cf}footer .brand{color
 .dossier-back dt{font:8px 'DM Mono',monospace;text-transform:uppercase;letter-spacing:.1em;color:#ff9de0}
 .dossier-back dd{font:11px/1.45 'DM Sans',sans-serif;color:#fff;margin:0;overflow-wrap:anywhere}
 .dossier-card:focus-visible{outline:3px solid #eaff3d;outline-offset:4px}
+.fashion-workbench{margin:25px 0 40px;padding:22px;border:1px solid #ff4fb8;border-radius:18px;background:linear-gradient(135deg,#311448,#1c1034 70%);box-shadow:0 0 24px #ff4fb820}
+.fashion-head{display:grid;grid-template-columns:1fr minmax(240px,.8fr);align-items:start;gap:14px;margin-bottom:18px}
+.fashion-head .trait-kicker{margin:0}
+.fashion-head>p:last-child{margin:0;color:#dfc8e4;font:12px/1.6 'DM Sans',sans-serif}
+.fashion-trait-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.fashion-trait-category{min-width:0;margin:0;padding:13px;border:1px solid #714179;border-radius:12px;background:#241238}
+.fashion-trait-category legend{padding:0 6px;color:#eaff3d;font:11px 'DM Mono',monospace;text-transform:uppercase;letter-spacing:.07em}
+.fashion-trait-category select{display:block;width:100%;min-height:44px;padding:9px 34px 9px 11px;border:1px solid #8a5e94;border-radius:9px;background:#35194b;color:#fff;font:12px/1.4 'DM Sans',sans-serif}
+.fashion-trait-category option{background:#241238;color:#fff}
+.fashion-trait-id{display:block;margin-top:8px;color:#c4a4d0;font:8px 'DM Mono',monospace;letter-spacing:.09em;text-transform:uppercase}
+.fashion-summary{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;margin-top:18px;padding-top:16px;border-top:1px solid #714179}
+.fashion-summary>span{color:#eaff3d;font:8px 'DM Mono',monospace;letter-spacing:.1em}
+.fashion-summary strong{color:#fff;font:12px/1.6 'DM Sans',sans-serif}
+.fashion-summary button{min-height:44px;padding:0 14px;border:1px solid #53eaff;border-radius:9px;background:#242040;color:#fff;font:10px 'DM Mono',monospace;cursor:pointer}
+.fashion-feedback{min-height:1em;margin:10px 0 0;color:#eaff3d;font:10px 'DM Mono',monospace}
 @media(max-width:760px){.dossier-section{margin-top:54px}.dossier-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.dossier-card:last-child{grid-column:1/-1;width:calc(50% - 7px);justify-self:center}}
-@media(max-width:520px){.dossier-grid{grid-template-columns:1fr;gap:16px}.dossier-card,.dossier-card:last-child{grid-column:auto;width:min(100%,340px);justify-self:center;aspect-ratio:4/5}.dossier-face{padding:16px}.dossier-front img{height:68%}.dossier-back dl{gap:7px}.dossier-back dl>div{padding-bottom:6px}.dossier-back dd{font-size:10px}}
+@media(max-width:760px){.fashion-head{grid-template-columns:1fr}.fashion-summary{grid-template-columns:1fr auto}.fashion-summary>span{grid-column:1/-1}.fashion-summary strong{grid-column:1;grid-row:2}.fashion-summary button{grid-column:2;grid-row:2}}
+@media(max-width:520px){.dossier-grid{grid-template-columns:1fr;gap:16px}.dossier-card,.dossier-card:last-child{grid-column:auto;width:min(100%,340px);justify-self:center;aspect-ratio:4/5}.dossier-face{padding:16px}.dossier-front img{height:68%}.dossier-back dl{gap:7px}.dossier-back dl>div{padding-bottom:6px}.dossier-back dd{font-size:10px}.fashion-workbench{padding:15px}.fashion-trait-grid{grid-template-columns:1fr}.fashion-summary{grid-template-columns:1fr}.fashion-summary>span,.fashion-summary strong,.fashion-summary button{grid-column:1;grid-row:auto}.fashion-summary button{justify-self:start}}
 @media(prefers-reduced-motion:reduce){.dossier-inner{transition:none}}
 @media(prefers-reduced-motion:reduce){.hero-art img,.blank-pencil,.hero::after,.card-image img{animation:none!important}}
 
