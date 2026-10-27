@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101a33">
+  <meta name="description" content="Meet the Itties: a collection of pencil characters, each with a personality of their own.">
+  <title>Itties — The Collection</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bree+Serif&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="royal.css?v=rainbow-cutout-20261024">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="Itties — House of Joshi, home"><img class="brand-mark" src="assets/itties-mark.svg" alt=""><span>ITTIES</span><small>HOUSE OF JOSHI</small></a>
+    <nav aria-label="Main navigation"><a href="#collection">The collection</a><a href="#lab">The Lab</a><a href="#hall">Hall of Fame</a></nav>
+    <button class="top-link wallet-button" id="connectWallet" type="button">CONNECT WALLET <span>↗</span></button>
+  </header>
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow"><i></i> A COLLECTION OF LITTLE CHARACTERS</p>
+        <h1>Made of wood.<br><em>Full of life.</em></h1>
+        <p class="intro">Meet the Itties: pencils with their own style, expression, and place in the world. Each one begins with a simple idea—make a mark.</p>
+        <a class="scroll-link" href="#mint"><span>↓</span> START WITH A BLANK</a>
+      </div>
+      <div class="hero-art">
+        <div class="hero-glow"></div>
+        <img src="assets/itty-trio-cutout.webp" alt="Three expressive Itties pencils: a blue striped pencil, a red floral pencil in a cap, and a cream floral pencil in red sunglasses" fetchpriority="high">
+        <span class="art-index">COLLECTION 001 <b>·</b> ITTIES</span>
+        <span class="art-caption">AN IDEA, SHARPENED.</span>
+      </div>
+      <div class="hero-foot"><span>HOUSE OF JOSHI&nbsp; / &nbsp;DIGITAL COLLECTIBLES</span><span>01 — 03</span></div>
+    </section>
+
+    <section class="mint-entry" id="mint">
+      <div class="mint-copy"><p class="eyebrow">THE GENESIS LOOP&nbsp; / &nbsp;01</p><h2>Every Itty starts<br><em>as a blank.</em></h2><p>Mint an uninitialized pencil directly to your connected wallet. The first look is yours to choose in the Lab.</p><div class="prototype-note" id="chainStatus"><span></span>CONNECT A WALLET TO CHECK THE COLLECTION NETWORK</div></div>
+      <div class="mint-card"><div class="mint-card-top"><span>GENESIS MINT</span><span id="mintPrice">0.02 ETH</span></div><div class="blank-pencil" aria-hidden="true"><span></span><i></i><b></b></div><div class="mint-card-bottom"><div><small>YOUR NEXT ITTY</small><strong>A blank pencil</strong></div><button class="action-button" id="mintItty" type="button" disabled>Mint Itty <span>↗</span></button></div><p class="mint-feedback" id="mintFeedback" aria-live="polite">Collection contract is not configured yet.</p></div>
+    </section>
+
+    <section class="collection" id="collection">
+      <div class="section-head">
+        <div><p class="eyebrow">CHARACTER STUDIES</p><h2>Every Itty has<br><em>a point of view.</em></h2></div>
+        <p class="section-copy">Three art directions for the collection. Each minted token begins as a blank pencil and takes shape in the Lab.</p>
+      </div>
+      <div class="cards">
+        <button class="itty-card active" type="button" data-name="Sky" data-image="assets/itty-sky.webp" aria-pressed="true">
+          <span class="card-image"><img src="assets/itty-sky.webp" alt="Sky, a blue striped Itty pencil"></span>
+          <span class="card-info"><span><small>STYLE STUDY 001</small><strong>Sky</strong></span><span class="arrow">↗</span></span>
+        </button>
+        <button class="itty-card" type="button" data-name="Bloom" data-image="assets/itty-bloom.webp" aria-pressed="false">
+          <span class="card-image"><img src="assets/itty-bloom.webp" alt="Bloom, a floral Itty pencil"></span>
+          <span class="card-info"><span><small>STYLE STUDY 002</small><strong>Bloom</strong></span><span class="arrow">↗</span></span>
+        </button>
+        <button class="itty-card" type="button" data-name="Noir" data-image="assets/itty-noir.webp" aria-pressed="false">
+          <span class="card-image"><img src="assets/itty-noir.webp" alt="Noir, a dark patterned Itty pencil"></span>
+          <span class="card-info"><span><small>STYLE STUDY 003</small><strong>Noir</strong></span><span class="arrow">↗</span></span>
+        </button>
+      </div>
+      <div class="selection"><span class="selection-mark">✳</span><p><small>SELECTED STUDY</small><strong id="selectedName">Sky</strong></p><span class="selection-note">VISUAL DIRECTION · NOT A MINTED TOKEN</span></div>
+    </section>
+
+    <section class="trait-layers" id="lab">
+      <div class="section-head">
+        <div><p class="eyebrow">THE ITTY LAB WORKBENCH&nbsp; / &nbsp;02</p><h2>Make it yours.<br><em>Keep every look.</em></h2></div>
+        <p class="section-copy">Unlock your token, choose a look across seven trait layers, and save it to the wardrobe vault. The first build is free in the blueprint.</p>
+      </div>
+      <div class="lab-door"><div class="door-mark">02</div><div class="door-copy"><strong>THE LAB DOOR</strong><span>Enter an Itty token ID owned by your connected wallet.</span></div><form id="unlockForm"><label class="sr-only" for="tokenIdInput">Itty token ID</label><span>#</span><input id="tokenIdInput" type="number" min="1" placeholder="Token ID" required><button id="unlockItty" type="submit" disabled>Unlock workbench <span>↗</span></button></form><p id="labFeedback" class="lab-feedback" aria-live="polite">Connect a wallet to access your Itties.</p></div>
+      <div class="lab-content" id="labContent" hidden>
+        <div class="lab-status"><span class="status-dot"></span><span id="activeTokenLabel">WORKBENCH OPEN · #1</span><span id="tokenStateLabel">FIRST BUILD · FREE</span><button id="lockLab" type="button" class="text-button">Lock workbench</button></div>
+      <div class="signature-looks">
+        <div class="signature-head"><p class="trait-kicker">SIGNATURE LOOKS</p><p>Start from one of the three pencil directions, then adjust each trait below.</p></div>
+        <div class="signature-grid" id="signatureLooks" role="group" aria-label="Choose a signature Itty look">
+          <button class="signature-look" type="button" data-look="sky" aria-pressed="false"><img src="assets/itty-sky.webp" alt=""><span><small>LOOK 001</small><strong>Sky</strong><em>Sky Blue Striped · Gold Metal Band · Wide-Eyed · Grin · Hype · None · Gold Shimmer</em></span></button>
+          <button class="signature-look" type="button" data-look="bloom" aria-pressed="false"><img src="assets/itty-bloom.webp" alt=""><span><small>LOOK 002</small><strong>Bloom</strong><em>Floral · Gold Metal Band · Wide-Eyed · Grin · Chill · None · Static</em></span></button>
+          <button class="signature-look" type="button" data-look="noir" aria-pressed="false"><img src="assets/itty-noir.webp" alt=""><span><small>LOOK 003</small><strong>Noir</strong><em>Stealth Matte Black · Gold Metal Band · Designer Shades · Grin · Focused · None · Gold Shimmer</em></span></button>
+        </div>
+      </div>
+      <div class="trait-explorer">
+        <div class="trait-controls">
+          <p class="trait-kicker">03 / CHOOSE A LAYER</p>
+          <div class="trait-tabs" id="traitTabs" role="tablist" aria-label="Trait categories"></div>
+          <div class="trait-selection" aria-live="polite"><small id="traitCategoryLabel">BODY FINISH</small><strong id="traitSelectedName">Classic Red</strong><span id="traitCount">01 / 06</span></div>
+          <p class="trait-note">Seven layers · six options each<br>Selected traits are saved to the contract wardrobe.</p>
+        </div>
+        <div class="trait-artwork">
+          <div class="trait-sheet-wrap"><img id="traitSheetImage" src="artwork-traits/01-body-finishes.webp" alt="Six AI-rendered body finish concepts for Itties pencils"><div class="trait-options" id="traitOptions" role="group" aria-label="Choose a body finish"></div></div>
+          <p class="trait-sheet-caption"><span>AI 3D CONCEPT SHEET</span><span>SELECT A CELL TO EXPLORE</span></p>
+        </div>
+      </div>
+      <div class="vault-bar"><div><small>ON-CHAIN WARDROBE</small><strong id="vaultSummary">No look loaded</strong></div><p id="saveFeeNote">Connect and load a token to read its traits.</p><button class="action-button" id="saveLook" type="button" disabled>Lock in initial build <span>↗</span></button></div>
+      <div class="wardrobe-traits" id="wardrobeTraits" aria-live="polite"></div>
+      <div class="demo-record"><span id="winCount">0 / 10 WINS</span><button id="recordWin" type="button" class="text-button" hidden>+ Record a win</button><small id="winNote">WINS ARE RECORDED BY THE COLLECTION OPERATOR</small></div>
+      <p id="saveFeedback" class="save-feedback" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="protocol" id="protocol">
+      <div class="protocol-head"><p class="eyebrow">A LOOK THAT EVOLVES</p><h2>From first mark<br><em>to forever.</em></h2><p>The Itty protocol is designed for a character you can keep revisiting.</p></div>
+      <div class="protocol-steps"><article><small>01 / GENESIS</small><h3>Mint blind</h3><p>Receive a blank pencil. Trait rarity is decided by its owner, not by a mint roll.</p></article><article><small>02 / THE LAB</small><h3>Build for free</h3><p>Unlock the workbench with your token ID. Save a first look across the seven trait categories.</p></article><article><small>03 / WARDROBE</small><h3>Restyle anytime</h3><p>Return to your vault and switch among traits you have unlocked. Restyles are designed around a small micro-fee.</p></article></div>
+      <div class="protocol-foot"><span>STANDALONE COLLECTIBLE · NO GAME TOKEN REQUIRED</span><span>PLANNED VERIFIED-HOLDER HOUSE-FEE EXEMPTION</span><span>PLANNED ANTI-WHALE / ANTI-RUG RULES</span></div>
+    </section>
+
+    <section class="hall" id="hall">
+      <div class="hall-copy"><p class="eyebrow">THE LASTING MARK</p><h2>Ten wins.<br><em>One legend.</em></h2><p>When an Itty reaches ten wins, the blueprint retires it to the Hall of Fame. Its holder can then forge a new genesis blank.</p></div>
+      <div class="hall-board"><div class="hall-board-head"><span>HOUSE OF JOSHI</span><span id="hallCount">HALL OF FAME · 000</span></div><div class="hall-empty" id="hallEntries"><span>✳</span><strong>Connect to view<br>the on-chain legends.</strong><small>EVERY CHAMPION STARTS AS A BLANK</small></div><div class="hall-board-foot"><span>10 WINS TO RETIREMENT</span><span>EPISODIC SHORTS · 30 MIN · BI-WEEKLY</span></div></div>
+    </section>
+
+    <section class="about" id="about">
+      <p class="eyebrow">A SMALL IDEA WITH ROOM TO GROW</p>
+      <div class="about-grid"><h2>Creativity<br>leaves <em>a mark.</em></h2><p>Itties is a standalone digital collectible world by House of Joshi. Each character starts blank, takes shape in the Lab, and can earn a place in the Hall of Fame. Future game collaborations are designed to stay separate from the collection’s ownership and value.</p></div>
+      <div class="about-bottom"><span>ITTIES&nbsp; / &nbsp;HOUSE OF JOSHI</span><span>THE FIRST EDITION</span></div>
+    </section>
+  </main>
+  <footer><a class="brand" href="#top" aria-label="Itties — home"><img class="brand-mark" src="assets/itties-mark.svg" alt=""><span>ITTIES</span></a><span>MADE OF WOOD. FULL OF LIFE.</span><span>HOUSE OF JOSHI</span></footer>
+  <script src="config.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

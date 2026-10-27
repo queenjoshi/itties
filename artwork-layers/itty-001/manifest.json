@@ -1,0 +1,56 @@
+{
+  "title": "Itty 001 \u2014 AI exploded layers",
+  "canvas": {
+    "width": 1024,
+    "height": 1536,
+    "background": "transparent"
+  },
+  "editableFile": "itty-001-layers.ora",
+  "layerOrderBackToFront": [
+    {
+      "name": "Graphite point",
+      "file": "01-graphite-point.png",
+      "x": 475,
+      "y": 1351,
+      "width": 88,
+      "height": 153
+    },
+    {
+      "name": "Sharpened wood",
+      "file": "02-sharpened-wood.png",
+      "x": 431,
+      "y": 1117,
+      "width": 208,
+      "height": 253
+    },
+    {
+      "name": "Pencil body, face and arms",
+      "file": "03-pencil-body-face-arms.png",
+      "x": 162,
+      "y": 395,
+      "width": 643,
+      "height": 733
+    },
+    {
+      "name": "Gold ferrule",
+      "file": "04-gold-ferrule.png",
+      "x": 394,
+      "y": 185,
+      "width": 234,
+      "height": 220
+    },
+    {
+      "name": "Coral eraser",
+      "file": "05-coral-eraser.png",
+      "x": 389,
+      "y": 24,
+      "width": 228,
+      "height": 171
+    }
+  ],
+  "characterRules": [
+    "two arms and hands",
+    "no legs"
+  ],
+  "note": "AI-generated exploded layer concept. The body, face, and arms are combined on one layer."
+}
