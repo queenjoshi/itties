@@ -37,6 +37,45 @@ const signatureLooks = {
   noir:  { name: 'Noir',  traits: [4, 4, 2, 0, 4, 0, 5] }
 };
 
+// Character concepts based on the supplied ecosystem directive. Mint-time
+// birth data remains blank until a token ID and block timestamp exist.
+const dossiers = [
+  { name: 'Amy', occupation: 'Smart Contract Architect', location: 'Base · House of Joshi node', origin: 'House of Joshi Genesis Vault #00', archetype: 'High-Fashion', palette: 'Cyber Blue · Platinum Silver', image: 'assets/itty-sky.webp', traits: ['Flowy Sundress · Tropical Neon', 'Designer Sunglasses', 'Cyber Blue hair · Glossy Crimson lips'] },
+  { name: 'Roxy', occupation: 'Syndicate Runner', location: 'Neo-Tokyo · Rain Alley', origin: 'House of Joshi Genesis Vault #00', archetype: 'High-Fashion', palette: 'Sunset Pink · Acid Purple', image: 'assets/itty-bloom.webp', traits: ['Cherry Blossom Noir', 'Semi-Hot Branded Bag', 'Sunset Pink hair · Electric Magenta lips'] },
+  { name: 'Vex', occupation: 'Runway Disruptor', location: 'The Vault · Lab Core', origin: 'House of Joshi Genesis Vault #00', archetype: 'High-Fashion', palette: 'Obsidian Black · Neon Cyan', image: 'assets/itty-noir.webp', traits: ['Geometric Prism', 'Mirrored Designer Sunglasses', 'Obsidian Black hair · Neon Cyan lips'] }
+];
+
+function renderDossiers() {
+  const grid = document.querySelector('#dossierGrid');
+  if (!grid) return;
+  grid.replaceChildren(...dossiers.map((dossier, index) => {
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'dossier-card';
+    card.setAttribute('aria-label', `${dossier.name} Itty dossier. Flip to see details.`);
+    card.setAttribute('aria-pressed', 'false');
+    const inner = document.createElement('span');
+    inner.className = 'dossier-inner';
+    const front = document.createElement('span');
+    front.className = 'dossier-face dossier-front';
+    front.innerHTML = `<span class="dossier-number">HOUSE FILE · 00${index + 1}</span><img src="${dossier.image}" alt=""><strong>${dossier.name} Itty</strong><small>${dossier.archetype} · CHARACTER STUDY</small><span class="dossier-flip-hint">TAP TO FLIP ↻</span>`;
+    const back = document.createElement('span');
+    back.className = 'dossier-face dossier-back';
+    const heading = document.createElement('strong'); heading.textContent = `${dossier.name} Itty`;
+    const fields = [
+      ['Official name', `${dossier.name} Itty`], ['Place of birth', dossier.origin],
+      ['Birthdate', 'Set at mint · exact Base block timestamp'], ['Current location', dossier.location],
+      ['Occupation', dossier.occupation], ['Style notes', `${dossier.palette} · ${dossier.traits.join(' · ')}`]
+    ];
+    const list = document.createElement('dl');
+    fields.forEach(([label, value]) => { const row = document.createElement('div'); const dt = document.createElement('dt'); dt.textContent = label; const dd = document.createElement('dd'); dd.textContent = value; row.append(dt, dd); list.append(row); });
+    const hint = document.createElement('small'); hint.textContent = 'TAP TO RETURN TO PORTRAIT ↻';
+    back.append(heading, list, hint); inner.append(front, back); card.append(inner);
+    card.addEventListener('click', () => { const flipped = card.getAttribute('aria-pressed') !== 'true'; card.setAttribute('aria-pressed', String(flipped)); });
+    return card;
+  }));
+}
+
 let provider;
 let signer;
 let contract;
@@ -384,6 +423,7 @@ if (window.ethereum?.on) {
 }
 
 renderCategory();
+renderDossiers();
 setWalletLabel();
 ui.mint.disabled = true;
 ui.unlock.disabled = true;
