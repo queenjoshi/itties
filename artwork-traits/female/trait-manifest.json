@@ -2,7 +2,12 @@
   "collection": "Itty Bitty / The Itties",
   "format": "OpenRaster",
   "editableFile": "female-trait-layers.ora",
-  "baseLayer": "../artwork-layers/itty-001/itty-001-full-render.png",
+  "baseLayer": "../../artwork-layers/itty-001/itty-001-full-render.png",
+  "canvas": {
+    "width": 1024,
+    "height": 1536,
+    "transparent": true
+  },
   "traits": [
     {
       "id": "hairColor",
@@ -11,27 +16,32 @@
         {
           "id": "hairColor_01",
           "name": "Obsidian Black",
-          "file": "generated/options/obsidian-black.png"
+          "componentFile": "generated/options/obsidian-black.png",
+          "alignedLayerFile": "generated/aligned-overlays/hair-obsidian-black.png"
         },
         {
           "id": "hairColor_02",
           "name": "Cyber Blue",
-          "file": "generated/options/cyber-blue.png"
+          "componentFile": "generated/options/cyber-blue.png",
+          "alignedLayerFile": "generated/aligned-overlays/hair-cyber-blue.png"
         },
         {
           "id": "hairColor_03",
           "name": "Acid Purple",
-          "file": "generated/options/acid-purple.png"
+          "componentFile": "generated/options/acid-purple.png",
+          "alignedLayerFile": "generated/aligned-overlays/hair-acid-purple.png"
         },
         {
           "id": "hairColor_04",
           "name": "Platinum Silver",
-          "file": "generated/options/platinum-silver.png"
+          "componentFile": "generated/options/platinum-silver.png",
+          "alignedLayerFile": "generated/aligned-overlays/hair-platinum-silver.png"
         },
         {
           "id": "hairColor_05",
           "name": "Sunset Pink",
-          "file": "generated/options/sunset-pink.png"
+          "componentFile": "generated/options/sunset-pink.png",
+          "alignedLayerFile": "generated/aligned-overlays/hair-sunset-pink.png"
         }
       ]
     },
@@ -42,27 +52,32 @@
         {
           "id": "lipColor_01",
           "name": "Glossy Crimson",
-          "file": "generated/options/glossy-crimson.png"
+          "componentFile": "generated/options/glossy-crimson.png",
+          "alignedLayerFile": "generated/aligned-overlays/lips-glossy-crimson.png"
         },
         {
           "id": "lipColor_02",
           "name": "Electric Magenta",
-          "file": "generated/options/electric-magenta.png"
+          "componentFile": "generated/options/electric-magenta.png",
+          "alignedLayerFile": "generated/aligned-overlays/lips-electric-magenta.png"
         },
         {
           "id": "lipColor_03",
           "name": "Dark Velvet Plum",
-          "file": "generated/options/dark-velvet-plum.png"
+          "componentFile": "generated/options/dark-velvet-plum.png",
+          "alignedLayerFile": "generated/aligned-overlays/lips-dark-velvet-plum.png"
         },
         {
           "id": "lipColor_04",
           "name": "Neon Cyan",
-          "file": "generated/options/neon-cyan.png"
+          "componentFile": "generated/options/neon-cyan.png",
+          "alignedLayerFile": "generated/aligned-overlays/lips-neon-cyan.png"
         },
         {
           "id": "lipColor_05",
           "name": "Matte Nude",
-          "file": "generated/options/matte-nude.png"
+          "componentFile": "generated/options/matte-nude.png",
+          "alignedLayerFile": "generated/aligned-overlays/lips-matte-nude.png"
         }
       ]
     },
@@ -73,30 +88,35 @@
         {
           "id": "apparelFemale_01",
           "name": "Flowy Sundress (Tropical Neon)",
-          "file": "generated/options/tropical-neon.png"
+          "componentFile": "generated/options/tropical-neon.png",
+          "alignedLayerFile": "generated/aligned-overlays/apparel-tropical-neon.png"
         },
         {
           "id": "apparelFemale_02",
           "name": "Cherry Blossom Noir",
-          "file": "generated/options/cherry-blossom-noir.png"
+          "componentFile": "generated/options/cherry-blossom-noir.png",
+          "alignedLayerFile": "generated/aligned-overlays/apparel-cherry-blossom-noir.png"
         },
         {
           "id": "apparelFemale_03",
           "name": "Geometric Prism",
-          "file": "generated/options/geometric-prism.png"
+          "componentFile": "generated/options/geometric-prism.png",
+          "alignedLayerFile": "generated/aligned-overlays/apparel-geometric-prism.png"
         },
         {
           "id": "apparelFemale_04",
           "name": "Statement Crop & Skirt",
-          "file": "generated/options/statement-crop-skirt.png"
+          "componentFile": "generated/options/statement-crop-skirt.png",
+          "alignedLayerFile": "generated/aligned-overlays/apparel-statement-crop-skirt.png"
         },
         {
           "id": "apparelFemale_05",
           "name": "Neon Bodysuit w/ Mesh",
-          "file": "generated/options/neon-mesh.png"
+          "componentFile": "generated/options/neon-mesh.png",
+          "alignedLayerFile": "generated/aligned-overlays/apparel-neon-mesh.png"
         }
       ]
     }
   ],
-  "notes": "15 generator-made, independent transparent component concepts plus the unchanged Itty Bitty base. The apparel images are surface concepts. The trait details have not been fit or composited onto the pencil; base silhouette remains unchanged."
+  "notes": "Each aligned option has the exact base canvas and is clipped to the existing eraser, mouth, or pencil body mask. The 15 layers are hidden by default in the ORA; toggle one option per category. The base character silhouette is unchanged."
 }

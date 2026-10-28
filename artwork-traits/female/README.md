@@ -1,13 +1,15 @@
 # Itty Bitty — generated female archetype trait layers
 
-The transparent PNG assets in `generated/options/` were made with the image generator from the approved trait list. Each option is a separate, named art layer. The three generated source sheets are kept in `generated/boards/`.
+The component artwork in `generated/options/` was made with the image generator from the approved trait list. The aligned layers in `generated/aligned-overlays/` use the same 1024 × 1536 canvas as the original Itty Bitty base.
+
+## Try the traits
+
+Open `/admin` and select any hair, lip, and apparel options. The character preview updates immediately. Select an active option again to remove it, or use **Reset to blank**. The base silhouette remains unchanged: hair color is masked to the existing eraser, lips stay in the existing mouth area, and apparel texture stays inside the pencil body and ends at the original sharpened-wood edge.
 
 ## Editable art file
 
-Open `female-trait-layers.ora` in Krita, GIMP, or another OpenRaster-compatible editor. It contains the unchanged Itty Bitty base as its own layer plus 15 independent trait option layers: five hair colors, five lip colors, and five apparel surface concepts. Layer names identify each option.
+Open `female-trait-layers.ora` in Krita, GIMP, or another OpenRaster-compatible editor. It contains the original base as a visible layer and 15 individually named, full-canvas aligned trait layers, hidden until selected. Toggle one option per category to mix a look.
 
-The site review page at `/admin` shows the exact base pencil beside each generated option. The base pencil silhouette and proportions remain unchanged.
+## Art status
 
-## Production status
-
-These are generated component concepts. Hair and lip artwork are standalone details; apparel is represented by body-surface swatches. The art has not yet been mapped/aligned onto the character as production-ready overlays or connected to NFT metadata.
+The assets are generated visual concepts. Apparel is a surface texture; these previews do not add clothing geometry, change the pencil silhouette, or update NFT metadata. The web customizer is a local visual preview and does not save a character or connect to minting.
