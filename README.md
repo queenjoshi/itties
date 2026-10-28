@@ -1,43 +1,81 @@
-# Itties ecosystem
+# Itties — House of Joshi
 
-Front end and Solidity contract for the Itties NFT collection.
+Responsive Base NFT experience built with Next.js, RainbowKit, Wagmi, and three Solidity contracts. This source implements the launch blueprint's mint, collectible expansion packs, tournament, metadata, and Hall of Fame flows.
 
-## On-chain functionality
+## Implemented
 
-- Blind ERC-721 mint at 0.02 ETH.
-- Wallet ownership checks for the token-ID Lab.
-- Free first trait configuration and 0.00025 ETH restyles.
-- Seven trait categories with six indexed options each.
-- Permanent on-chain wardrobe flags for every selected trait.
-- Per-wallet mint/holding limit and fixed collection supply, both chosen at deployment.
-- Collection-operator win recording and retirement at ten wins.
-- On-chain Hall of Fame token IDs.
+- Base and Base Sepolia wallet connection.
+- ERC-721 genesis mint for `0.025 ETH`, with unlimited public supply and a separate House pool capped at 200.
+- ERC-1155 trait expansion packs paid for in `$KING` and `$QUEEN`; packs attach permanently to an Itty and contribute to its rarity score.
+- Lab refresh pricing: 50 `$KING` + 50 `$QUEEN`; Standard expansion pricing: 150 + 150; Luxury: 400 + 400. Exact pack contents and caps are configured when the owner creates each pack.
+- ERC-2981 royalty default of 5%.
+- 24-hour flash tournaments, operator scoring, winner/revamp credits, and Hall of Fame leaderboards.
+- Retirement after 52 verified wins to the dead vault, plus one claimable genesis credit and Hall of Fame reward pages.
+- Dynamic ERC-721 JSON metadata and SVG renderer that composes the base pencil artwork with attached pack artwork.
+- Operator panel for verifying wins, issuing credits, creating pack definitions, and creating tournaments.
 
-## Launch settings
+## Local setup
 
-- Network: Base mainnet (chain ID `8453`).
-- Proposed supply and mint cap: 10,000 NFTs total, maximum 3 mints per wallet. These are planning defaults only; the deployed contract makes them permanent, so confirm them before deployment.
-- Mint: 0.02 ETH; first trait configuration: free; restyle: 0.00025 ETH.
+Requirements: Node.js 20.9+ and npm.
 
-## Before deployment
+```sh
+npm ci
+cp .env.example .env.local
+npm run dev
+```
 
-1. Confirm the supply and per-wallet mint cap, then choose a permanent metadata hosting URL.
-2. Install Solidity 0.8.24+ and OpenZeppelin Contracts 5.x.
-3. Compile and deploy `contracts/IttyLabProtocol.sol` with the final constructor values.
-4. Put the deployed Base contract address in `config.js` (chain ID and explorer are already set).
-5. Host metadata and final token artwork at the configured base URI. Current AI trait sheets are review boards, not individual NFT renders.
+Open `http://localhost:3000`. To use wallet connection, add a WalletConnect/Reown project ID to `.env.local`. To enable on-chain actions, fill in the deployed addresses and metadata configuration described below. The site remains viewable without these values.
 
-The browser never receives a private key. Wallets sign transactions locally. No private key, contract address, or RPC secret belongs in the source files.
+Compile all three Solidity contracts with the pinned local compiler:
 
-## Preview
+```sh
+npm run compile:contracts
+```
 
-Serve this directory over HTTP and open it in a browser with an EVM wallet extension. The wallet will not enable minting until `config.js` points to a deployed contract on the selected chain.
+Build the production site:
 
-## Main files
+```sh
+npm run build
+npm start
+```
 
-- `index.html`, `styles.css`, `app.js`, `config.js` — site and wallet-connected Lab
-- `contracts/IttyLabProtocol.sol` — NFT and wardrobe contract
-- `assets/` — compressed character concept art
-- `artwork-traits/` — compressed 3D trait concept sheets
-- `artwork-layers/itty-001/` — layered pencil artwork study
-- `traits.md` — trait options and design boundaries
+## Deployment configuration
+
+Before deployment, provide real `$KING`, `$QUEEN`, treasury, royalty receiver, metadata base URI, deployer key, and Base RPC credentials in `.env.local`. These values are intentionally not invented or committed. The tokens must use 18 decimals because the contract's fee amounts are denominated in whole-token units.
+
+Set `DEPLOY_METADATA_BASE_URI` to the final site's absolute `/api/metadata/` URL (including the trailing slash), so marketplace token URIs can reach the JSON endpoint. Configure `NEXT_PUBLIC_CORE_ADDRESS`, `NEXT_PUBLIC_PACKS_ADDRESS`, `NEXT_PUBLIC_TOURNAMENTS_ADDRESS`, `NEXT_PUBLIC_KING_ADDRESS`, and `NEXT_PUBLIC_QUEEN_ADDRESS` from the deployment output in the site's production environment. Set `NEXT_PUBLIC_START_BLOCK` to the deployment block so the Hall of Fame page can scan win events efficiently.
+
+Deploy first to Base Sepolia and review the deployed contracts and transaction flows:
+
+```sh
+npm run deploy:sepolia
+```
+
+After verification and a deliberate mainnet release:
+
+```sh
+npm run deploy:base
+```
+
+The deployment script deploys `IttiesCore`, `IttiesExpansionPacks`, and `IttiesFlashTournaments`, wires their roles, and writes public addresses to the ignored `.env.local`. It does not deploy `$KING` or `$QUEEN`; those addresses must already exist. Deploying the contracts is a separate, irreversible on-chain action and is not performed by the build.
+
+## Contract design notes
+
+- The blueprint contains conflicting statements on token transferability (transferable until 52 wins vs. soulbound during the climb). This implementation follows the explicit core/security pillar: tokens are transferable before retirement, and the 52-win vault transfer is permanent.
+- `IttiesFlashTournaments` caps a tournament at 256 entrants so on-chain finalization is bounded. Results are submitted by an authorized operator; the current app does not independently verify off-chain match results.
+- A tournament entrant receives a revamp credit at registration; the winner receives an additional credit. A 52-win retirement yields one genesis credit to the previous holder.
+- Each expansion pack's items and rarity caps are recorded on-chain at creation, and each pack can be attached at most once to a given Itty.
+- The renderer accepts IPFS pack image URIs through the configured gateway. Keep images optimized and publish pack JSON with a transparent pencil-body layer that matches the selected base artwork.
+- No smart contract is formally audited. Review, test on Base Sepolia, and obtain an independent security review before any mainnet launch.
+
+## Main paths
+
+- `app/page.jsx` — mint, inventory, trait pack, tournament, Hall of Fame, and operator experiences.
+- `app/rewards/[slug]/page.jsx` — Hall of Fame reward detail pages.
+- `app/api/metadata/[tokenId]/route.js` — token metadata.
+- `app/api/render/[tokenId]/route.js` — composed NFT SVG image.
+- `contracts/IttiesCore.sol` — ERC-721 mint, credits, win retirement, metadata, royalties.
+- `contracts/IttiesExpansionPacks.sol` — ERC-1155 expansion-pack marketplace and binding.
+- `contracts/IttiesFlashTournaments.sol` — timed tournament, scoring, and rewards.
+- `scripts/deploy.mjs` — Base Sepolia / Base deployment and wiring.
+- `artwork-traits/`, `artwork-layers/`, `public/assets/` — compressed concept art, layered study, and site imagery.
