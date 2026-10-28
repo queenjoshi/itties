@@ -13,3 +13,7 @@ These are presentation sheets, not individually isolated production NFT files. T
 | Expression | `05-expressions.webp` |
 | Accessories | `06-accessories.webp` |
 | Motion effects | `07-motion-effects.webp` |
+
+## Female archetype traits
+
+The separate blueprint-specific female traits are in female/. The OpenRaster file contains transparent category layers for hair color, lip color, and apparel, with the named options documented there.

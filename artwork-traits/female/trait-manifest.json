@@ -1,0 +1,44 @@
+{
+  "collection": "Itty Bitty / The Itties",
+  "format": "OpenRaster",
+  "canvas": {
+    "width": 2172,
+    "height": 724
+  },
+  "layers": [
+    {
+      "name": "Hair colors",
+      "file": "layers/01-hair-colors.png",
+      "options": [
+        "Obsidian Black",
+        "Cyber Blue",
+        "Acid Purple",
+        "Platinum Silver",
+        "Sunset Pink"
+      ]
+    },
+    {
+      "name": "Lip colors",
+      "file": "layers/02-lip-colors.png",
+      "options": [
+        "Glossy Crimson",
+        "Electric Magenta",
+        "Dark Velvet Plum",
+        "Neon Cyan",
+        "Matte Nude"
+      ]
+    },
+    {
+      "name": "Apparel",
+      "file": "layers/03-apparel.png",
+      "options": [
+        "Flowy Sundress (Tropical Neon)",
+        "Cherry Blossom Noir",
+        "Geometric Prism",
+        "Statement Crop & Skirt",
+        "Neon Bodysuit w/ Mesh"
+      ]
+    }
+  ],
+  "notes": "Each editable OpenRaster layer is a transparent five-option concept board. Toggle one category layer at a time. These are visual trait studies, not production-aligned character cutouts."
+}
