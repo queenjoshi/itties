@@ -24,7 +24,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Open `http://localhost:3000`. To use wallet connection, add a WalletConnect/Reown project ID to `.env.local`. To enable on-chain actions, fill in the deployed addresses and metadata configuration described below. The site remains viewable without these values.
+Open `http://localhost:3000`. RainbowKit provides the wallet picker, Base network selection, and branded connection modal. Add a WalletConnect/Reown project ID from [Reown Cloud](https://cloud.reown.com/) to `.env.local` to enable QR and mobile deep-link pairing; injected browser wallets can connect without it. To enable on-chain actions, fill in the deployed addresses and metadata configuration described below. The site remains viewable without these values.
 
 Compile all three Solidity contracts with the pinned local compiler:
 
