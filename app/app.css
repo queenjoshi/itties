@@ -37,6 +37,7 @@ html,body{max-width:100%;overflow-x:clip}body{min-width:320px}main,section,artic
 /* Clearer type scale and header hierarchy */
 .launch-nav{grid-template-columns:minmax(175px,.8fr) minmax(0,2fr) auto;gap:clamp(12px,2.6vw,36px)}
 .launch-brand{gap:10px;font:800 18px/1 Outfit,'DM Sans',sans-serif;letter-spacing:.1em}
+.launch-brand span{white-space:nowrap}
 .launch-brand img{width:36px;height:36px}
 .launch-brand small{margin:0 0 2px 2px;color:#f0d47b;font:600 8px/1.1 'DM Sans',sans-serif;letter-spacing:.15em;white-space:nowrap}
 .launch-nav nav{gap:clamp(12px,2vw,28px)}

@@ -219,7 +219,7 @@ export default function Home() {
   const enabled = addressesReady && chainId === base.id;
 
   return <>
-    <header className="launch-nav"><a className="launch-brand" href="#top"><img src={`${IMG}itties-mark.svg`} alt=""/><span>ITTIES</span><small>HOUSE OF JOSHI</small></a><nav><a href="#mint">Mint</a><a href="#lab">The Lab</a><a href="#gauntlet">Gauntlet</a><a href="#expansions">Expansions</a><a href="#vault">Hall of Fame</a></nav><ConnectButton chainStatus="icon" showBalance={false}/></header>
+    <header className="launch-nav"><a className="launch-brand" href="#top"><img src={`${IMG}itties-mark.svg`} alt=""/><span>ITTY BITTY</span><small>THE ITTIES</small></a><nav><a href="#mint">Mint</a><a href="#lab">The Lab</a><a href="#gauntlet">Gauntlet</a><a href="#expansions">Expansions</a><a href="#vault">Hall of Fame</a></nav><ConnectButton chainStatus="icon" showBalance={false}/></header>
     <main id="top">
       <section className="launch-hero">
         <div className="launch-hero-copy"><p className="eyebrow"><i/> THE HOUSE OF JOSHI · BASE COLLECTION</p><h1>Blank canvas.<br/><em>Make a legend.</em></h1><p>Meet the bright, odd Itties. Build a character from a blank, then take it on a 52-win climb. Itties are soulbound until they enter the public Hall of Fame vault.</p><div className="launch-actions"><a className="launch-primary" href="#mint">MINT GENESIS · 0.025 ETH ↗</a><a className="launch-secondary" href="#expansions">EXPLORE THE LAB</a></div><div className="launch-stat-row"><span><b>∞</b> PUBLIC SUPPLY</span><span><b>05%</b> SECONDARY ROYALTY</span><span><b>52</b> WINS TO IMMORTALITY</span></div></div>
@@ -242,7 +242,7 @@ export default function Home() {
 
       <section className="launch-principles launch-section"><p className="eyebrow">THE HOUSE PROMISE</p><div className="principle-grid"><article><span>01</span><h3>Blank by design</h3><p>Identity comes from expansions bound to the token, not a fixed genesis trait roll.</p></article><article><span>02</span><h3>Scarcity with receipts</h3><p>Unopened packs stay transferable. Bound packs become permanent on-chain DNA.</p></article><article><span>03</span><h3>Built for the long run</h3><p>Wins, credit, retirement, and rarity are visible from Base—not hidden in a private database.</p></article></div><small>THE ITTIES · BASE · ERC-721 + ERC-1155 · 5% ERC-2981</small></section>
     </main>
-    <footer className="launch-footer"><a className="launch-brand" href="#top"><img src={`${IMG}itties-mark.svg`} alt=""/><span>ITTIES</span></a><span>THE HOUSE OF JOSHI · EVERY LEGEND STARTS AS A BLANK</span><a href="#top">BACK TO TOP ↑</a></footer>
+    <footer className="launch-footer"><a className="launch-brand" href="#top"><img src={`${IMG}itties-mark.svg`} alt=""/><span>ITTY BITTY</span></a><span>THE HOUSE OF JOSHI · EVERY LEGEND STARTS AS A BLANK</span><a href="#top">BACK TO TOP ↑</a></footer>
   </>;
 }
 

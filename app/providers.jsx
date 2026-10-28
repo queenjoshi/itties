@@ -8,7 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 
 const config = getDefaultConfig({
-  appName: "The Itties · House of Joshi",
+  appName: "Itty Bitty · The Itties",
   // Injected browser wallets remain available without this key; WalletConnect
   // QR/mobile pairing needs a real project ID from cloud.reown.com.
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "00000000000000000000000000000000",

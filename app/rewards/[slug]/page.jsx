@@ -23,9 +23,9 @@ export default async function RewardPage({ params }) {
   const reward = rewards[slug];
   if (!reward) return <main className="reward-page"><Link href="/#vault">← Return to the Hall of Fame</Link><h1>Reward not found</h1></main>;
   return <main className="reward-page">
-    <header className="reward-nav"><Link href="/" className="launch-brand"><img src="/assets/itties-mark.svg" alt=""/><span>ITTIES</span><small>HOUSE OF JOSHI</small></Link><Link href="/#vault">← BACK TO THE HALL</Link></header>
+    <header className="reward-nav"><Link href="/" className="launch-brand"><img src="/assets/itties-mark.svg" alt=""/><span>ITTY BITTY</span><small>THE ITTIES</small></Link><Link href="/#vault">← BACK TO THE HALL</Link></header>
     <div className="reward-wrap"><Link href="/#vault" className="reward-back">← HALL OF FAME REWARDS</Link><section className="reward-card"><div className={`reward-art reward-art-${reward.number}`} aria-hidden="true"><span>✳</span><b>{reward.number}</b></div><div className="reward-copy"><p className="eyebrow">LEGACY PACKAGE · {reward.number} / {reward.eyebrow}</p><h1>{reward.title}</h1><p className="reward-lead">{reward.lead}</p><p>{reward.copy}</p><div className="reward-stamp">{reward.stamp}</div><Link className="launch-primary" href="/#vault">RETURN TO THE VAULT ↗</Link></div></section><p className="reward-note">{reward.note}</p></div>
-    <footer className="launch-footer"><Link className="launch-brand" href="/"><img src="/assets/itties-mark.svg" alt=""/><span>ITTIES</span></Link><span>THE HOUSE OF JOSHI · EVERY LEGEND STARTS AS A BLANK</span></footer>
+    <footer className="launch-footer"><Link className="launch-brand" href="/"><img src="/assets/itties-mark.svg" alt=""/><span>ITTY BITTY</span></Link><span>THE HOUSE OF JOSHI · EVERY LEGEND STARTS AS A BLANK</span></footer>
   </main>;
 }
 
