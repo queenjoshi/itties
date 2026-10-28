@@ -9,20 +9,23 @@ const traits = [
   {
     id: "01",
     title: "Hair color",
-    image: "/admin-review/female-hair.webp",
-    options: ["Obsidian Black", "Cyber Blue", "Acid Purple", "Platinum Silver", "Sunset Pink"]
+    options: [
+      ["Obsidian Black", "obsidian-black"], ["Cyber Blue", "cyber-blue"], ["Acid Purple", "acid-purple"], ["Platinum Silver", "platinum-silver"], ["Sunset Pink", "sunset-pink"]
+    ]
   },
   {
     id: "02",
     title: "Lip color",
-    image: "/admin-review/female-lips.webp",
-    options: ["Glossy Crimson", "Electric Magenta", "Dark Velvet Plum", "Neon Cyan", "Matte Nude"]
+    options: [
+      ["Glossy Crimson", "glossy-crimson"], ["Electric Magenta", "electric-magenta"], ["Dark Velvet Plum", "dark-velvet-plum"], ["Neon Cyan", "neon-cyan"], ["Matte Nude", "matte-nude"]
+    ]
   },
   {
     id: "03",
     title: "Apparel",
-    image: "/admin-review/female-apparel.webp",
-    options: ["Flowy Sundress · Tropical Neon", "Cherry Blossom Noir", "Geometric Prism", "Statement Crop & Skirt", "Neon Bodysuit with Mesh"]
+    options: [
+      ["Flowy Sundress · Tropical Neon", "tropical-neon"], ["Cherry Blossom Noir", "cherry-blossom-noir"], ["Geometric Prism", "geometric-prism"], ["Statement Crop & Skirt", "statement-crop-skirt"], ["Neon Bodysuit with Mesh", "neon-mesh"]
+    ]
   }
 ];
 
@@ -38,7 +41,7 @@ export default function AdminArtReview() {
         <section className="admin-review-hero">
           <p className="admin-review-eyebrow"><i /> ADMIN · CHARACTER ART REVIEW</p>
           <h1>Blank to <em>character.</em></h1>
-          <p>Review the current pencil base and the female trait artwork together. This page is a visual workbench for checking the art.</p>
+            <p>Review Itty Bitty’s unchanged pencil base beside the generated female archetype trait layers.</p>
         </section>
 
         <section className="admin-review-blank" aria-labelledby="admin-blank-title">
@@ -46,8 +49,8 @@ export default function AdminArtReview() {
           <div className="admin-review-blank-copy">
             <p className="admin-review-eyebrow">GENESIS · BASE CHARACTER</p>
             <h2 id="admin-blank-title">The blank</h2>
-            <p>Current base concept: matte-black pencil body, eraser, ferrule, face and arms. It is the starting character artwork before these female concept variations.</p>
-            <span className="admin-review-chip">BASE ART · CONCEPT</span>
+            <p>This is the Itty Bitty base character. Its pencil silhouette, body, face, and arms remain unchanged while trait details are prepared as separate layers.</p>
+            <span className="admin-review-chip">ITTY BITTY · BASE LAYER</span>
           </div>
         </section>
 
@@ -60,14 +63,13 @@ export default function AdminArtReview() {
             {traits.map((trait) => (
               <article className="admin-review-card" key={trait.id}>
                 <div className="admin-review-card-heading"><span>{trait.id}</span><h3>{trait.title}</h3><small>5 OPTIONS</small></div>
-                <div className="admin-review-card-art"><img src={trait.image} alt={`${trait.title} concept sheet with five female Itty trait variants`} /></div>
-                <ol className="admin-review-options">{trait.options.map((option, index) => <li key={option}><span>{String(index + 1).padStart(2, "0")}</span>{option}</li>)}</ol>
+                <ol className="admin-review-options">{trait.options.map(([option, asset], index) => <li key={asset}><span>{String(index + 1).padStart(2, "0")}</span><img src={`/admin-review/generated/${asset}.webp`} alt="" /><b>{option}</b></li>)}</ol>
               </article>
             ))}
           </div>
         </section>
 
-        <aside className="admin-review-note"><span>ART STATUS</span><p>These are concept boards, not production-ready transparent cutouts. The OpenRaster file contains each trait category as a separate toggleable layer. No controls here alter NFT metadata or minting.</p></aside>
+        <aside className="admin-review-note"><span>ART STATUS</span><p>Generated trait details are stored as independent transparent PNG layers; Itty Bitty’s base silhouette is unchanged. These are visual concept assets and are not wired to NFT metadata or minting.</p></aside>
         <footer className="admin-review-footer">THE HOUSE OF JOSHI <span>·</span> INTERNAL ART REVIEW</footer>
       </div>
     </main>

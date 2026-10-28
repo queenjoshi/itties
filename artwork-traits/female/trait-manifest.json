@@ -1,44 +1,102 @@
 {
   "collection": "Itty Bitty / The Itties",
   "format": "OpenRaster",
-  "canvas": {
-    "width": 2172,
-    "height": 724
-  },
-  "layers": [
+  "editableFile": "female-trait-layers.ora",
+  "baseLayer": "../artwork-layers/itty-001/itty-001-full-render.png",
+  "traits": [
     {
-      "name": "Hair colors",
-      "file": "layers/01-hair-colors.png",
+      "id": "hairColor",
+      "name": "Hair color",
       "options": [
-        "Obsidian Black",
-        "Cyber Blue",
-        "Acid Purple",
-        "Platinum Silver",
-        "Sunset Pink"
+        {
+          "id": "hairColor_01",
+          "name": "Obsidian Black",
+          "file": "generated/options/obsidian-black.png"
+        },
+        {
+          "id": "hairColor_02",
+          "name": "Cyber Blue",
+          "file": "generated/options/cyber-blue.png"
+        },
+        {
+          "id": "hairColor_03",
+          "name": "Acid Purple",
+          "file": "generated/options/acid-purple.png"
+        },
+        {
+          "id": "hairColor_04",
+          "name": "Platinum Silver",
+          "file": "generated/options/platinum-silver.png"
+        },
+        {
+          "id": "hairColor_05",
+          "name": "Sunset Pink",
+          "file": "generated/options/sunset-pink.png"
+        }
       ]
     },
     {
-      "name": "Lip colors",
-      "file": "layers/02-lip-colors.png",
+      "id": "lipColor",
+      "name": "Lip color",
       "options": [
-        "Glossy Crimson",
-        "Electric Magenta",
-        "Dark Velvet Plum",
-        "Neon Cyan",
-        "Matte Nude"
+        {
+          "id": "lipColor_01",
+          "name": "Glossy Crimson",
+          "file": "generated/options/glossy-crimson.png"
+        },
+        {
+          "id": "lipColor_02",
+          "name": "Electric Magenta",
+          "file": "generated/options/electric-magenta.png"
+        },
+        {
+          "id": "lipColor_03",
+          "name": "Dark Velvet Plum",
+          "file": "generated/options/dark-velvet-plum.png"
+        },
+        {
+          "id": "lipColor_04",
+          "name": "Neon Cyan",
+          "file": "generated/options/neon-cyan.png"
+        },
+        {
+          "id": "lipColor_05",
+          "name": "Matte Nude",
+          "file": "generated/options/matte-nude.png"
+        }
       ]
     },
     {
+      "id": "apparelFemale",
       "name": "Apparel",
-      "file": "layers/03-apparel.png",
       "options": [
-        "Flowy Sundress (Tropical Neon)",
-        "Cherry Blossom Noir",
-        "Geometric Prism",
-        "Statement Crop & Skirt",
-        "Neon Bodysuit w/ Mesh"
+        {
+          "id": "apparelFemale_01",
+          "name": "Flowy Sundress (Tropical Neon)",
+          "file": "generated/options/tropical-neon.png"
+        },
+        {
+          "id": "apparelFemale_02",
+          "name": "Cherry Blossom Noir",
+          "file": "generated/options/cherry-blossom-noir.png"
+        },
+        {
+          "id": "apparelFemale_03",
+          "name": "Geometric Prism",
+          "file": "generated/options/geometric-prism.png"
+        },
+        {
+          "id": "apparelFemale_04",
+          "name": "Statement Crop & Skirt",
+          "file": "generated/options/statement-crop-skirt.png"
+        },
+        {
+          "id": "apparelFemale_05",
+          "name": "Neon Bodysuit w/ Mesh",
+          "file": "generated/options/neon-mesh.png"
+        }
       ]
     }
   ],
-  "notes": "Each editable OpenRaster layer is a transparent five-option concept board. Toggle one category layer at a time. These are visual trait studies, not production-aligned character cutouts."
+  "notes": "15 generator-made, independent transparent component concepts plus the unchanged Itty Bitty base. The apparel images are surface concepts. The trait details have not been fit or composited onto the pencil; base silhouette remains unchanged."
 }

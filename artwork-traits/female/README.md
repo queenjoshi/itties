@@ -1,13 +1,13 @@
-# Female archetype trait layers
+# Itty Bitty — generated female archetype trait layers
 
-A transparent 3D concept set for the female-specific traits in the launch blueprint. Open female-trait-layers.ora in Krita, GIMP, or another OpenRaster editor and toggle category layers to view each group.
+The transparent PNG assets in `generated/options/` were made with the image generator from the approved trait list. Each option is a separate, named art layer. The three generated source sheets are kept in `generated/boards/`.
 
-## Layer order
+## Editable art file
 
-- Hair colors — Obsidian Black, Cyber Blue, Acid Purple, Platinum Silver, Sunset Pink.
-- Lip colors — Glossy Crimson, Electric Magenta, Dark Velvet Plum, Neon Cyan, Matte Nude.
-- Apparel — Flowy Sundress (Tropical Neon), Cherry Blossom Noir, Geometric Prism, Statement Crop & Skirt, Neon Bodysuit with Mesh.
+Open `female-trait-layers.ora` in Krita, GIMP, or another OpenRaster-compatible editor. It contains the unchanged Itty Bitty base as its own layer plus 15 independent trait option layers: five hair colors, five lip colors, and five apparel surface concepts. Layer names identify each option.
 
-The three PNGs in the layers folder have transparent backgrounds and preserve the category boards as independent editable layers in the ORA. The artwork uses matte-black pencil bodies, gold ferrules, pink erasers, sharpened wood and graphite tips, expressive faces, arms and hands, with no legs.
+The site review page at `/admin` shows the exact base pencil beside each generated option. The base pencil silhouette and proportions remain unchanged.
 
-These are visual trait studies, not production-aligned character cutouts. They do not change the site or the NFT metadata.
+## Production status
+
+These are generated component concepts. Hair and lip artwork are standalone details; apparel is represented by body-surface swatches. The art has not yet been mapped/aligned onto the character as production-ready overlays or connected to NFT metadata.
