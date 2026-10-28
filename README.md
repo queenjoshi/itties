@@ -41,9 +41,9 @@ npm start
 
 ## Deployment configuration
 
-Before deployment, provide real `$KING`, `$QUEEN`, treasury, royalty receiver, metadata base URI, deployer key, and Base RPC credentials in `.env.local`. These values are intentionally not invented or committed. The tokens must use 18 decimals because the contract's fee amounts are denominated in whole-token units.
+The provided `$KING` (`0x8a66…6483`), `$QUEEN` (`0x1f2f…0aa5`), and House wallet (`0x6736…6a5f`) addresses are prefilled in `.env.example` and `.env.local`. The House wallet is configured as both treasury and royalty receiver. Before deployment, add the deployer key and a permanent metadata base URI to `.env.local`; the public token addresses and House wallet are not secrets. The tokens must use 18 decimals because contract fees are denominated in whole-token units.
 
-Set `DEPLOY_METADATA_BASE_URI` to the final site's absolute `/api/metadata/` URL (including the trailing slash), so marketplace token URIs can reach the JSON endpoint. Configure `NEXT_PUBLIC_CORE_ADDRESS`, `NEXT_PUBLIC_PACKS_ADDRESS`, `NEXT_PUBLIC_TOURNAMENTS_ADDRESS`, `NEXT_PUBLIC_KING_ADDRESS`, and `NEXT_PUBLIC_QUEEN_ADDRESS` from the deployment output in the site's production environment. Set `NEXT_PUBLIC_START_BLOCK` to the deployment block so the Hall of Fame page can scan win events efficiently.
+Set `DEPLOY_METADATA_BASE_URI` to the final site's absolute `/api/metadata/` URL (including the trailing slash), so marketplace token URIs can reach the JSON endpoint. Configure `NEXT_PUBLIC_CORE_ADDRESS`, `NEXT_PUBLIC_PACKS_ADDRESS`, and `NEXT_PUBLIC_TOURNAMENTS_ADDRESS` from the deployment output in the site's production environment. The KING, QUEEN, treasury, and royalty addresses are already prefilled. Set `NEXT_PUBLIC_START_BLOCK` to the deployment block so the Hall of Fame page can scan win events efficiently.
 
 Deploy first to Base Sepolia and review the deployed contracts and transaction flows:
 
