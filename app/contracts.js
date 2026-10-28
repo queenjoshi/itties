@@ -1,10 +1,10 @@
 import { parseAbi } from "viem";
 
-export const coreAddress = process.env.NEXT_PUBLIC_ITTIES_CORE_ADDRESS || "";
-export const packsAddress = process.env.NEXT_PUBLIC_EXPANSION_PACKS_ADDRESS || "";
-export const tournamentAddress = process.env.NEXT_PUBLIC_TOURNAMENT_ADDRESS || "";
-export const kingAddress = process.env.NEXT_PUBLIC_KING_TOKEN_ADDRESS || "";
-export const queenAddress = process.env.NEXT_PUBLIC_QUEEN_TOKEN_ADDRESS || "";
+export const coreAddress = process.env.NEXT_PUBLIC_CORE_ADDRESS || process.env.NEXT_PUBLIC_ITTIES_CORE_ADDRESS || "";
+export const packsAddress = process.env.NEXT_PUBLIC_PACKS_ADDRESS || process.env.NEXT_PUBLIC_EXPANSION_PACKS_ADDRESS || "";
+export const tournamentAddress = process.env.NEXT_PUBLIC_TOURNAMENTS_ADDRESS || process.env.NEXT_PUBLIC_TOURNAMENT_ADDRESS || "";
+export const kingAddress = process.env.NEXT_PUBLIC_KING_ADDRESS || process.env.NEXT_PUBLIC_KING_TOKEN_ADDRESS || "";
+export const queenAddress = process.env.NEXT_PUBLIC_QUEEN_ADDRESS || process.env.NEXT_PUBLIC_QUEEN_TOKEN_ADDRESS || "";
 export const launchStartBlock = BigInt(process.env.NEXT_PUBLIC_START_BLOCK || "0");
 export const addressesReady = [coreAddress, packsAddress, tournamentAddress, kingAddress, queenAddress].every(address => /^0x[a-fA-F0-9]{40}$/.test(address));
 
