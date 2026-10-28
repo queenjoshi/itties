@@ -18,9 +18,8 @@ interface IIttiesPacks {
 /// @title IttiesCore
 /// @notice Base genesis collection, expansion-driven identity, 52-win vault retirement,
 ///         Hall of Fame genesis credits, and ERC-2981 royalties.
-/// @dev The blueprint contradicts itself about transferability during the climb. This
-///      implementation follows its core-pillar and security-summary wording: tokens
-///      may transfer before 52 wins; after retirement only the dead-address vault owns them.
+/// @dev Itties are soulbound while in the active collection. At 52 wins, the contract
+///      automatically moves the token into the public, keyless Hall of Fame vault.
 contract IttiesCore is ERC721URIStorage, ERC2981, Ownable, Pausable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
@@ -82,6 +81,7 @@ contract IttiesCore is ERC721URIStorage, ERC2981, Ownable, Pausable, ReentrancyG
     error ExpansionAlreadyAttached();
     error ExactTokenPaymentRequired();
     error RetiredTokenLocked();
+    error SoulboundToken();
     error WithdrawalFailed();
 
     constructor(
@@ -271,8 +271,13 @@ contract IttiesCore is ERC721URIStorage, ERC2981, Ownable, Pausable, ReentrancyG
     {
         from = _ownerOf(tokenId);
         if (from == HALL_OF_FAME_VAULT && to != address(0)) revert RetiredTokenLocked();
+        bool authorizedRetirement =
+            to == HALL_OF_FAME_VAULT &&
+            _retirementTransferToken == tokenId &&
+            ittyProgress[tokenId].isRetired;
+        if (from != address(0) && to != address(0) && !authorizedRetirement) revert SoulboundToken();
         if (from != address(0) && to == HALL_OF_FAME_VAULT) {
-            if (_retirementTransferToken != tokenId || !ittyProgress[tokenId].isRetired) revert RetiredTokenLocked();
+            if (!authorizedRetirement) revert RetiredTokenLocked();
         }
         if (from != address(0)) _removeOwnedToken(from, tokenId);
         address previousOwner = super._update(to, tokenId, auth);

@@ -61,7 +61,7 @@ The deployment script deploys `IttiesCore`, `IttiesExpansionPacks`, and `IttiesF
 
 ## Contract design notes
 
-- The blueprint contains conflicting statements on token transferability (transferable until 52 wins vs. soulbound during the climb). This implementation follows the explicit core/security pillar: tokens are transferable before retirement, and the 52-win vault transfer is permanent.
+- Itties are soulbound throughout the active climb. At 52 verified wins, the contract automatically transfers the Itty to the public keyless dead-address vault; it remains visible on-chain and cannot return to active circulation.
 - `IttiesFlashTournaments` caps a tournament at 256 entrants so on-chain finalization is bounded. Results are submitted by an authorized operator; the current app does not independently verify off-chain match results.
 - A tournament entrant receives a revamp credit at registration; the winner receives an additional credit. A 52-win retirement yields one genesis credit to the previous holder.
 - Each expansion pack's items and rarity caps are recorded on-chain at creation, and each pack can be attached at most once to a given Itty.
