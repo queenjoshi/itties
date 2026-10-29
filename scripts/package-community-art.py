@@ -16,12 +16,24 @@ for pack,ids in looks.items():
  source=source_dir/f'{pack}-source.png'
  if not source.exists():continue
  im=Image.open(source).convert('RGBA');w,h=im.size
- # Each final lineup has three equally spaced characters.
- cuts=[0,round(w/3),round(w*2/3),w]
+ # Split in the clearest transparent gutter, not through a neighbouring aura.
+ alpha=im.getchannel('A')
+ def seam(ideal):
+  radius=round(w*.065)
+  def cost(x):
+   hist=alpha.crop((x-6,0,x+6,h)).histogram()
+   return sum(n*value*value for value,n in enumerate(hist)) + abs(x-ideal)
+  return min(range(max(7,ideal-radius),min(w-7,ideal+radius)),key=cost)
+ cuts=[0,seam(round(w/3)),seam(round(w*2/3)),w]
  target=root/f'public/assets/community-packs/{pack}';target.mkdir(parents=True,exist_ok=True)
  im.save(target/'lineup.webp',quality=88,method=5)
  for i,key in enumerate(ids):
-  item=im.crop((cuts[i],0,cuts[i+1],h));item.thumbnail((488,976),Image.Resampling.LANCZOS)
+  item=im.crop((cuts[i],0,cuts[i+1],h))
+  box=item.getchannel('A').point(lambda a:255 if a>12 else 0).getbbox()
+  if box:
+   box=(max(0,box[0]-18),max(0,box[1]-18),min(item.width,box[2]+18),min(item.height,box[3]+18))
+   item=item.crop(box)
+  item.thumbnail((488,976),Image.Resampling.LANCZOS)
   canvas=Image.new('RGBA',(512,1024));canvas.alpha_composite(item,((512-item.width)//2,(1024-item.height)//2));canvas.save(target/f'{key}.webp',quality=90,method=5)
 all_files=[root/f'public/assets/community-packs/{p}/{k}.webp' for p,ids in looks.items() for k in ids]
 if all(f.exists() for f in all_files):

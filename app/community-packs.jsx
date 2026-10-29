@@ -18,7 +18,7 @@ export default function CommunityPacks() {
         <figure className="community-foil-pack">
           <div className="pack-seal" aria-hidden="true"/>
           <div className="foil-pack-heading"><span>THE ITTIES</span><small>COMMUNITY SERIES {pack.series}</small><strong>{pack.name}</strong><span>EXPANSION PACK</span></div>
-          <div className="foil-pack-art"><img key={`${pack.id}-${look.id}`} src={`/assets/community-packs/${pack.id}/${look.id}.webp?v=single-pack1`} alt={`${pack.name} pack: one ${pack.face} pencil character wearing ${look.attire}, ${look.headwear}, with ${look.aura}`} width="512" height="1024"/></div>
+          <div className="foil-pack-art"><img key={`${pack.id}-${look.id}`} src={`/assets/community-packs/${pack.id}/${look.id}.webp?v=clean-pack2`} alt={`${pack.name} pack: one ${pack.face} pencil character wearing ${look.attire}, ${look.headwear}, with ${look.aura}`} width="512" height="1024"/></div>
           <figcaption><span>LOOK {String(lookIndex+1).padStart(2,"0")} / 03</span><strong>{look.name}</strong><small>3 SIGNATURE LOOKS · {pack.name} COLLECTION</small></figcaption>
           <div className="pack-seal" aria-hidden="true"/>
         </figure>
