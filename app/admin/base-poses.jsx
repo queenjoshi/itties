@@ -16,6 +16,7 @@ export default function BasePoses() {
   const [selected, setSelected] = useState(null);
   const [skin, setSkin] = useState("yellow");
   const [finish, setFinish] = useState(null);
+  const [arms, setArms] = useState(true);
   const pose = poses.find(item => item.id === selected);
   return (
     <main className="admin-review">
@@ -25,8 +26,8 @@ export default function BasePoses() {
       </header>
       <div className="admin-review-wrap">
         <section className="admin-review-hero">
-          <p>BLANK BASES</p>
-          <h1>Pick a <em>pose.</em></h1>
+          <p>{pose ? "LAYER WORKBENCH" : "CHOOSE YOUR BASE"}</p>
+          <h1>{pose ? <>Change your <em>layers.</em></> : <>Pick a <em>pose.</em></>}</h1>
           <p>Choose a pose, a pencil colour, and a body finish.</p>
         </section>
         {!pose ? (
@@ -39,18 +40,20 @@ export default function BasePoses() {
             ))}
           </section>
         ) : (
-          <section aria-label={`${pose.name} blank pencil`}>
-            <div className="base-pose-preview" style={{ maxWidth: 480, margin: "0 auto" }}>
+          <section className="customizer-workbench" aria-label={`${pose.name} blank pencil`}>
+            <div className="base-pose-preview" >
               <div className="pose-layer-stage">
                 <img src={skin === "yellow" ? `/assets/base-poses/${pose.id}.webp?v=clean-edges7` : `/assets/pencil-skins/${pose.id}-${skin}.webp?v=clean-edges7`} alt={`${STANDARD_SKINS.find(item => item.id === skin).name} pencil — ${pose.name}`} />
-              {finish && <img className="pose-dress-layer" src={`/assets/body-finishes/${pose.id}/${finish}.webp?v=1`} alt={finishes.find(([id]) => id === finish)[1] + " body finish"}/>}
+              {arms && <img className="pose-dress-layer" src={`/assets/arm-traits/${pose.id}-wave-${finish === "classic-red" ? "red" : finish === "polka-dot-pink" ? "pink" : finish === "sky-blue-striped" ? "blue" : finish === "stealth-matte-black" ? "black" : finish === "neon-acid" ? "pepe-green" : skin}.webp?v=clean-edges7`} alt="Matching arms with white gloves"/>}
+                {finish && <img className="pose-dress-layer" src={`/assets/body-finishes/${pose.id}/${finish}.webp?v=1`} alt={finishes.find(([id]) => id === finish)[1] + " body finish"}/>}
               </div>
-              <strong>{pose.name} · {STANDARD_SKINS.find(item => item.id === skin).name}</strong>
-              <fieldset className="trait-section" style={{ width: "100%", marginTop: 20 }}>
+              <strong>{pose.name} · {finish ? finishes.find(([id]) => id === finish)[1] : STANDARD_SKINS.find(item => item.id === skin).name}</strong>
+              </div><div className="customizer-controls"><h2>Make it yours.</h2><fieldset className="trait-section" style={{ width: "100%", marginTop: 20 }}>
                 <legend>Pencil colour</legend>
                 <div className="trait-colours">{STANDARD_SKINS.map(({id,name}) => <button type="button" key={id} aria-pressed={skin === id} onClick={() => { setSkin(id); setFinish(null); }}><span className={`trait-swatch swatch-${id}`} aria-hidden="true"/><span>{name}</span></button>)}</div>
               </fieldset>
               <fieldset className="trait-section" style={{ width: "100%", marginTop: 20 }}><legend>Body finish</legend><p style={{fontSize:12,color:"#b9a7c5"}}>A printed finish replaces the barrel colour.</p><div className="trait-colours">{[[null,"Plain colour"],...finishes].map(([id,name]) => <button type="button" key={id || "plain"} aria-pressed={finish === id} onClick={() => setFinish(id)}><span>{name}</span></button>)}</div></fieldset>
+              <fieldset className="trait-section"><legend>Arms & hands</legend><div className="trait-colours"><button type="button" aria-pressed={arms} onClick={() => setArms(true)}>Wave & hip pose</button><button type="button" aria-pressed={!arms} onClick={() => setArms(false)}>No arms</button></div></fieldset>
               <button className="pose-change-button" type="button" onClick={() => setSelected(null)}>← Change pose</button>
             </div>
           </section>
