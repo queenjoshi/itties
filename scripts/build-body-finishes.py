@@ -21,15 +21,21 @@ for pose in ['tilt-left','tilt-right','straight']:
  yy,xx=np.where(yellow);bottom=int(yy.max())
  for i,key in enumerate(ids):
   tile=sheet.crop((round((i%3)*sheet.width/3),round((i//3)*sheet.height/2),round((i%3+1)*sheet.width/3),round((i//3+1)*sheet.height/2)))
+  tile=tile.crop((8,8,tile.width-8,tile.height-8))
   tex=np.array(tile).astype(float);out=np.zeros_like(a)
+  widths=[np.count_nonzero(yellow[y]) for y in run]
+  barrel_width=float(np.median(widths))
+  solid={'classic-red':(238,22,28),'stealth-matte-black':(30,31,35),'neon-acid':(177,244,12)}
   for y in range(top,bottom+1):
    xs=np.where(yellow[y])[0]
    if not len(xs):continue
    left,right=int(xs.min()),int(xs.max());x=np.arange(left,right+1) if y<int(run[-1])-20 else xs
-   u=(x-left)/max(1,right-left);v=(y-top)/max(1,bottom-top)
+   centre=(left+right)/2
+   u=np.clip(.5+(x-centre)/barrel_width*.48,0,1);v=(y-top)/barrel_width*.48
    # One print across the barrel, four repeats along its length.
-   tx=np.minimum((u*(tile.width-1)).astype(int),tile.width-1);ty=int(v*4*(tile.height-1))%(tile.height-1)
-   colour=tex[ty,tx];shade=np.clip(g[y,x]/220,.45,1.15)
+   tx=np.minimum((u*(tile.width-1)).astype(int),tile.width-1);ty=int(v*(tile.height-1))%(tile.height-1)
+   colour=np.broadcast_to(solid[key],(len(x),3)) if key in solid else tex[ty,tx]
+   shade=np.clip(g[y,x]/220,.45,1.15)
    if key=='stealth-matte-black':shade=.75+(shade-.75)*.5
    out[y,x,:3]=np.clip(colour*shade[:,None],0,255).astype('uint8');out[y,x,3]=a[y,x,3]
   layer=Image.fromarray(out);dest=root/f'public/assets/body-finishes/{pose}';dest.mkdir(parents=True,exist_ok=True);layer.save(dest/f'{key}.webp',quality=94)

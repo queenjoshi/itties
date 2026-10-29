@@ -45,7 +45,7 @@ export default function BasePoses() {
               <div className="pose-layer-stage">
                 <img src={skin === "yellow" ? `/assets/base-poses/${pose.id}.webp?v=clean-edges7` : `/assets/pencil-skins/${pose.id}-${skin}.webp?v=clean-edges7`} alt={`${STANDARD_SKINS.find(item => item.id === skin).name} pencil — ${pose.name}`} />
               {arms && <img className="pose-dress-layer" src={`/assets/arm-traits/${pose.id}-wave-${finish === "classic-red" ? "red" : finish === "polka-dot-pink" ? "pink" : finish === "sky-blue-striped" ? "blue" : finish === "stealth-matte-black" ? "black" : finish === "neon-acid" ? "pepe-green" : skin}.webp?v=clean-edges7`} alt="Matching arms with white gloves"/>}
-                {finish && <img className="pose-dress-layer" src={`/assets/body-finishes/${pose.id}/${finish}.webp?v=1`} alt={finishes.find(([id]) => id === finish)[1] + " body finish"}/>}
+                {finish && <img className="pose-dress-layer" src={`/assets/body-finishes/${pose.id}/${finish}.webp?v=2`} alt={finishes.find(([id]) => id === finish)[1] + " body finish"}/>}
               </div>
               <strong>{pose.name} · {finish ? finishes.find(([id]) => id === finish)[1] : STANDARD_SKINS.find(item => item.id === skin).name}</strong>
               </div><div className="customizer-controls"><h2>Make it yours.</h2><fieldset className="trait-section" style={{ width: "100%", marginTop: 20 }}>
