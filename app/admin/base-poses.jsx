@@ -43,9 +43,10 @@ export default function BasePoses() {
           <section className="customizer-workbench" aria-label={`${pose.name} blank pencil`}>
             <div className="base-pose-preview" >
               <div className="pose-layer-stage">
-                <img style={{visibility: finish ? "hidden" : "visible"}} src={skin === "yellow" ? `/assets/base-poses/${pose.id}.webp?v=clean-edges7` : `/assets/pencil-skins/${pose.id}-${skin}.webp?v=clean-edges7`} alt={`${STANDARD_SKINS.find(item => item.id === skin).name} pencil — ${pose.name}`} />
-              {arms && <img style={{zIndex: 3}} className="pose-dress-layer" src={`/assets/arm-traits/${pose.id}-wave-${finish === "classic-red" ? "red" : finish === "polka-dot-pink" ? "pink" : finish === "sky-blue-striped" ? "blue" : finish === "stealth-matte-black" ? "black" : finish === "neon-acid" ? "pepe-green" : skin}.webp?v=clean-edges7`} alt="Matching arms with white gloves"/>}
-                {finish && <img className="pose-dress-layer" src={`/assets/body-finishes/${pose.id}/${finish}.webp?v=3`} alt={finishes.find(([id]) => id === finish)[1] + " body finish"}/>}
+                <img style={{zIndex:2,visibility: finish ? "hidden" : "visible"}} src={skin === "yellow" ? `/assets/base-poses/${pose.id}.webp?v=clean-edges7` : `/assets/pencil-skins/${pose.id}-${skin}.webp?v=clean-edges7`} alt={`${STANDARD_SKINS.find(item => item.id === skin).name} pencil — ${pose.name}`} />
+              {arms && <img style={{zIndex: 1}} className="pose-dress-layer" src={`/assets/arm-traits/${pose.id}-wave-${finish === "classic-red" ? "red" : finish === "polka-dot-pink" ? "pink" : finish === "sky-blue-striped" ? "blue" : finish === "stealth-matte-black" ? "black" : finish === "neon-acid" ? "pepe-green" : skin}.webp?v=clean-edges7`} alt="Matching arms with white gloves"/>}
+                {arms && <img style={{zIndex:3}} className="pose-dress-layer" src={`/assets/arm-traits/${pose.id}-hip-glove.webp?v=1`} alt="Hip hand in front of barrel"/>}
+                {finish && <img style={{zIndex:2}} className="pose-dress-layer" src={`/assets/body-finishes/${pose.id}/${finish}.webp?v=3`} alt={finishes.find(([id]) => id === finish)[1] + " body finish"}/>}
               </div>
               <strong>{pose.name} · {finish ? finishes.find(([id]) => id === finish)[1] : STANDARD_SKINS.find(item => item.id === skin).name}</strong>
               </div><div className="customizer-controls"><h2>Make it yours.</h2><fieldset className="trait-section" style={{ width: "100%", marginTop: 20 }}>
