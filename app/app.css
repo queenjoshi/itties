@@ -142,3 +142,5 @@ html,body{max-width:100%;overflow-x:clip}body{min-width:320px}main,section,artic
 .header-wallet-button:hover{background:#ff79b5}.header-wallet-button:focus-visible{outline:3px solid #53eaff;outline-offset:4px}
 @media(max-width:640px){.header-wallet-button{min-height:40px;padding:0 12px;font-size:11px}.launch-wallet{min-width:0}}
 @media(max-width:360px){.header-wallet-button{padding:0 9px;font-size:10px}}
+
+.pack-payment-policy{margin:0;padding:18px 20px;border-bottom:1px solid #ffffff20;color:#cdbfd5;font-size:12px;line-height:1.7}.pack-payment-policy strong{display:block;color:#eaff3d}.pack-copy a{font-size:10px;color:#53eaff;overflow-wrap:anywhere}.pack-prices b{overflow-wrap:anywhere}.admin-card select{width:100%;min-height:44px;background:#20152e;color:white;border:1px solid #604477;border-radius:8px;padding:10px}

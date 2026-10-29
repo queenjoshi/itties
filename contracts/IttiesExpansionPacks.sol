@@ -26,6 +26,13 @@ contract IttiesExpansionPacks is ERC1155, ERC2981, Ownable, Pausable, Reentrancy
         bool luxury;
     }
 
+    struct CommunityPayment {
+        address token;
+        uint256 unitPrice;
+    }
+
+    mapping(uint256 => CommunityPayment) public communityPayment;
+
     IERC20 public kingToken;
     IERC20 public queenToken;
     address public treasury;
@@ -40,9 +47,13 @@ contract IttiesExpansionPacks is ERC1155, ERC2981, Ownable, Pausable, Reentrancy
     event ExpansionBound(address indexed holder, uint256 indexed tokenId, uint256 indexed expansionId);
     event PackStatusChanged(uint256 indexed expansionId, bool active);
     event PaymentTokensChanged(address indexed kingToken, address indexed queenToken);
+    event CommunityPaymentConfigured(uint256 indexed expansionId, address indexed token, uint256 unitPrice);
+    event CommunityPaymentReceived(address indexed buyer, uint256 indexed expansionId, address indexed token, uint256 amount);
     event TreasuryChanged(address indexed treasury);
 
     error InvalidAddress();
+    error WrongPaymentRoute();
+    error PaymentQuoteChanged();
     error InvalidPack();
     error PackUnavailable();
     error CapExceeded();
@@ -69,6 +80,37 @@ contract IttiesExpansionPacks is ERC1155, ERC2981, Ownable, Pausable, Reentrancy
         uint64 supplyCap_,
         bool luxury_
     ) external onlyOwner returns (uint256 expansionId) {
+        return _createPack(name_, metadataURI_, kingPrice_, queenPrice_, rarityWeight_, supplyCap_, luxury_);
+    }
+
+    /// @notice Community tokens must be verified Base ERC-20 contracts by the owner.
+    /// Prices are exact token base units, not an automatic USD conversion.
+    function createCommunityPack(
+        string calldata name_, string calldata metadataURI_, address token_, uint256 unitPrice_,
+        uint32 rarityWeight_, uint64 supplyCap_
+    ) external onlyOwner returns (uint256 expansionId) {
+        _validateCommunityPayment(token_, unitPrice_);
+        expansionId = _createPack(name_, metadataURI_, 0, 0, rarityWeight_, supplyCap_, false);
+        communityPayment[expansionId] = CommunityPayment(token_, unitPrice_);
+        emit CommunityPaymentConfigured(expansionId, token_, unitPrice_);
+    }
+
+    function setCommunityPrice(uint256 expansionId, uint256 unitPrice_) external onlyOwner {
+        CommunityPayment storage payment = communityPayment[expansionId];
+        if (payment.token == address(0) || unitPrice_ == 0) revert InvalidPack();
+        payment.unitPrice = unitPrice_;
+        emit CommunityPaymentConfigured(expansionId, payment.token, unitPrice_);
+    }
+
+    function _validateCommunityPayment(address token_, uint256 unitPrice_) private view {
+        if (token_ == address(0) || token_.code.length == 0) revert InvalidAddress();
+        if (unitPrice_ == 0) revert InvalidPack();
+    }
+
+    function _createPack(
+        string memory name_, string memory metadataURI_, uint256 kingPrice_, uint256 queenPrice_,
+        uint32 rarityWeight_, uint64 supplyCap_, bool luxury_
+    ) private returns (uint256 expansionId) {
         if (bytes(name_).length == 0 || bytes(metadataURI_).length == 0 || rarityWeight_ == 0) revert InvalidPack();
         if (luxury_ && supplyCap_ == 0) revert InvalidPack();
         expansionId = nextPackId++;
@@ -79,6 +121,7 @@ contract IttiesExpansionPacks is ERC1155, ERC2981, Ownable, Pausable, Reentrancy
     }
 
     function buyExpansion(uint256 expansionId, uint256 quantity) external nonReentrant whenNotPaused {
+        if (communityPayment[expansionId].token != address(0)) revert WrongPaymentRoute();
         Pack storage pack = _packs[expansionId];
         if (!pack.active) revert PackUnavailable();
         if (quantity == 0) revert InvalidPack();
@@ -91,6 +134,27 @@ contract IttiesExpansionPacks is ERC1155, ERC2981, Ownable, Pausable, Reentrancy
         pack.minted += uint64(quantity);
         _mint(msg.sender, expansionId, quantity, "");
         emit ExpansionBought(msg.sender, expansionId, quantity);
+    }
+
+    /// @notice Both quote fields must match the displayed checkout. An owner price
+    /// update during approval causes a revert instead of charging a new amount.
+    function buyCommunityExpansion(
+        uint256 expansionId, uint256 quantity, address expectedToken, uint256 expectedUnitPrice
+    ) external nonReentrant whenNotPaused {
+        CommunityPayment memory payment = communityPayment[expansionId];
+        if (payment.token == address(0)) revert WrongPaymentRoute();
+        if (payment.token != expectedToken || payment.unitPrice != expectedUnitPrice) revert PaymentQuoteChanged();
+        Pack storage pack = _packs[expansionId];
+        if (!pack.active) revert PackUnavailable();
+        if (quantity == 0) revert InvalidPack();
+        if (quantity > type(uint64).max - uint256(pack.minted)) revert CapExceeded();
+        if (pack.supplyCap != 0 && uint256(pack.minted) + quantity > pack.supplyCap) revert CapExceeded();
+        uint256 cost = payment.unitPrice * quantity;
+        _collectExact(IERC20(payment.token), cost);
+        pack.minted += uint64(quantity);
+        _mint(msg.sender, expansionId, quantity, "");
+        emit ExpansionBought(msg.sender, expansionId, quantity);
+        emit CommunityPaymentReceived(msg.sender, expansionId, payment.token, cost);
     }
 
     function mintPromotional(address recipient, uint256 expansionId, uint256 quantity) external onlyOwner whenNotPaused {

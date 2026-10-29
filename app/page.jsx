@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useChainId, usePublicClient, useReadContract, useReadContracts, useSwitchChain, useWalletClient } from "wagmi";
 import { base } from "wagmi/chains";
-import { formatEther, parseAbiItem, parseEther, parseUnits } from "viem";
+import { formatEther, formatUnits, isAddress, zeroAddress, parseAbiItem, parseEther, parseUnits } from "viem";
 import { addressesReady, coreAbi, coreAddress, erc20Abi, kingAddress, packsAbi, queenAddress, tournamentAbi, tournamentAddress, packsAddress, launchStartBlock } from "./contracts";
 
 const IMG = "/assets/";
@@ -25,6 +25,8 @@ export default function Home() {
   const [adminAddress, setAdminAddress] = useState("");
   const [grantAddress, setGrantAddress] = useState("");
   const [houseRecipient, setHouseRecipient] = useState("");
+  const [buyingPack, setBuyingPack] = useState(null);
+  const [newCommunity, setNewCommunity] = useState({ community: "DOGE", uri: "", token: "", price: "", weight: "10", cap: "", verified: false });
   const [newPack, setNewPack] = useState({ name: "", uri: "", weight: "10", cap: "", luxury: false });
 
   const reads = useReadContracts({
@@ -63,7 +65,11 @@ export default function Home() {
     contracts: (expansionIds || []).map(id => ({ address: packsAddress, abi: packsAbi, functionName: "packInfo", args: [id] })),
     query: { enabled: addressesReady && Boolean(expansionIds?.length) }
   });
-  const expansionInfo = useMemo(() => (expansionReads.data || []).map((result, index) => ({ id: expansionIds[index], info: result?.result })).filter(item => item.info), [expansionIds, expansionReads.data]);
+  const paymentReads = useReadContracts({
+    contracts: (expansionIds || []).map(id => ({ address: packsAddress, abi: packsAbi, functionName: "communityPayment", args: [id] })),
+    query: { enabled: addressesReady && Boolean(expansionIds?.length) }
+  });
+  const expansionInfo = useMemo(() => (expansionReads.data || []).map((result, index) => ({ id: expansionIds[index], info: result?.result, payment: paymentReads.data?.[index]?.result })).filter(item => item.info), [expansionIds, expansionReads.data, paymentReads.data]);
 
   const tournamentReads = useReadContracts({
     contracts: (tournamentIds || []).map(id => ({ address: tournamentAddress, abi: tournamentAbi, functionName: "tournamentInfo", args: [id] })),
@@ -153,24 +159,46 @@ export default function Home() {
     } catch (error) { setStatus(error.shortMessage || error.message); }
   }
 
-  async function buyPack(id, item) {
-    if (!walletClient || !address) return;
+  async function buyPack(id, displayedPayment) {
+    if (!walletClient || !address || !publicClient || buyingPack !== null) return;
     try {
-      const [,, kingCost, queenCost] = item;
-      for (const [tokenAddress, cost] of [[kingAddress, kingCost], [queenAddress, queenCost]]) {
-        const allowance = await publicClient.readContract({ address: tokenAddress, abi: erc20Abi, functionName: "allowance", args: [address, packsAddress] });
-        const total = cost;
-        if (allowance < total) {
-          const hash = await walletClient.writeContract({ address: tokenAddress, abi: erc20Abi, functionName: "approve", args: [packsAddress, total] });
-          setStatus("Approve the expansion payment in your wallet."); await publicClient.waitForTransactionReceipt({ hash });
+      if (chainId !== base.id) throw new Error("Switch your wallet to Base first.");
+      if (!displayedPayment) throw new Error("Payment details are unavailable. Please refresh.");
+      setBuyingPack(String(id));
+      const [item, payment] = await Promise.all([
+        publicClient.readContract({ address: packsAddress, abi: packsAbi, functionName: "packInfo", args: [id] }),
+        publicClient.readContract({ address: packsAddress, abi: packsAbi, functionName: "communityPayment", args: [id] })
+      ]);
+      const [paymentToken, unitPrice] = payment;
+      if (paymentToken.toLowerCase() !== displayedPayment[0].toLowerCase() || unitPrice !== displayedPayment[1]) {
+        await paymentReads.refetch();
+        throw new Error("The pack price changed. Review the refreshed price and buy again.");
+      }
+      const community = paymentToken !== zeroAddress;
+      const payments = community ? [[paymentToken, unitPrice]] : [[kingAddress, item[2]], [queenAddress, item[3]]];
+      for (const [tokenAddress, cost] of payments) {
+        if (cost === 0n) continue;
+        const [allowance, balance] = await Promise.all([
+          publicClient.readContract({ address: tokenAddress, abi: erc20Abi, functionName: "allowance", args: [address, packsAddress] }),
+          publicClient.readContract({ address: tokenAddress, abi: erc20Abi, functionName: "balanceOf", args: [address] })
+        ]);
+        if (balance < cost) throw new Error("Insufficient balance of the pack’s payment token.");
+        if (allowance < cost) {
+          setStatus("Approve only the displayed token amount in your wallet.");
+          const hash = await walletClient.writeContract({ address: tokenAddress, abi: erc20Abi, functionName: "approve", args: [packsAddress, cost] });
+          if ((await publicClient.waitForTransactionReceipt({ hash })).status !== "success") throw new Error("The payment transaction reverted. No pack was purchased.");
         }
       }
-      const hash = await walletClient.writeContract({ address: packsAddress, abi: packsAbi, functionName: "buyExpansion", args: [id, 1n] });
-      setStatus("Buying your expansion pack…"); await publicClient.waitForTransactionReceipt({ hash });
+      const hash = await walletClient.writeContract({ address: packsAddress, abi: packsAbi,
+        functionName: community ? "buyCommunityExpansion" : "buyExpansion",
+        args: community ? [id, 1n, paymentToken, unitPrice] : [id, 1n] });
+      setStatus("Buying your expansion pack…"); if ((await publicClient.waitForTransactionReceipt({ hash })).status !== "success") throw new Error("The payment transaction reverted. No pack was purchased.");
       const balance = await publicClient.readContract({ address: packsAddress, abi: packsAbi, functionName: "balanceOf", args: [address, id] });
       setPacksBalances(previous => ({ ...previous, [id.toString()]: balance }));
-      setStatus("Expansion pack added to your inventory.");
+      await expansionReads.refetch();
+      setStatus("Expansion added. Payment was sent directly to the House treasury.");
     } catch (error) { setStatus(error.shortMessage || error.message); }
+    finally { setBuyingPack(null); }
   }
 
   async function bindPack(id) {
@@ -201,9 +229,10 @@ export default function Home() {
 
   async function ownerAction(contract, abi, functionName, args, successText) {
     try {
+      if (!walletClient || !publicClient || chainId !== base.id) throw new Error("Connect the owner wallet on Base first.");
       const hash = await walletClient.writeContract({ address: contract, abi, functionName, args });
       setStatus("Confirm the House operation in your wallet.");
-      await publicClient.waitForTransactionReceipt({ hash });
+      if ((await publicClient.waitForTransactionReceipt({ hash })).status !== "success") throw new Error("The House operation reverted.");
       await reads.refetch();
       setStatus(successText);
     } catch (error) { setStatus(error.shortMessage || error.message); }
@@ -214,6 +243,21 @@ export default function Home() {
     const cap = newPack.cap ? BigInt(newPack.cap) : 0n;
     const price = BigInt(newPack.luxury ? 400 : 150) * 10n ** 18n;
     await ownerAction(packsAddress, packsAbi, "createPack", [newPack.name, newPack.uri, price, price, BigInt(newPack.weight), cap, newPack.luxury], "Expansion pack created. Refreshing the catalog.");
+  }
+
+  async function submitCommunityPack(event) {
+    event.preventDefault();
+    try {
+      if (!isContractOwner || !newCommunity.verified) throw new Error("Verify the community token on Base before creating the pack.");
+      if (!isAddress(newCommunity.token) || newCommunity.token === zeroAddress) throw new Error("Enter a valid Base ERC-20 address.");
+      const code = await publicClient.getCode({ address: newCommunity.token });
+      if (!code || code === "0x") throw new Error("No token contract exists at this Base address.");
+      const decimals = await publicClient.readContract({ address: newCommunity.token, abi: erc20Abi, functionName: "decimals" });
+      if (!/^\d+(?:[.]\d+)?$/.test(newCommunity.price) || (newCommunity.price.split(".")[1] || "").length > decimals) throw new Error(`Enter a positive token amount with at most ${decimals} decimal places.`);
+      const price = parseUnits(newCommunity.price, decimals);
+      if (price <= 0n) throw new Error("Set a positive community-token price.");
+      await ownerAction(packsAddress, packsAbi, "createCommunityPack", [newCommunity.community + " Community Pack", newCommunity.uri, newCommunity.token, price, BigInt(newCommunity.weight), BigInt(newCommunity.cap || "0")], "Community pack created with its own token payment.");
+    } catch (error) { setStatus(error.shortMessage || error.message); }
   }
 
   const enabled = addressesReady && chainId === base.id;
@@ -236,9 +280,17 @@ export default function Home() {
 
       <section className="launch-inventory launch-section" id="inventory"><div className="launch-section-title"><p className="eyebrow">YOUR HOUSE FILE</p><h2>Keep your <em>Itties close.</em></h2><p>Connect a wallet on Base to see owned characters, Hall of Fame credits, and Lab passes.</p></div><div className="inventory-panel"><div className="inventory-stat"><small>YOUR ITTIES</small><strong>{ownedIds?.length ?? "—"}</strong></div><div className="inventory-stat"><small>GENESIS CREDITS</small><strong>{hallCredits == null ? "—" : amount(hallCredits)}</strong></div><div className="inventory-stat"><small>LAB REVAMP PASSES</small><strong>{revampPasses == null ? "—" : amount(revampPasses)}</strong></div><div className="owned-list">{ownedIds?.length ? ownedIds.map(id => <button key={String(id)} className={selectedId === id ? "owned-chip selected" : "owned-chip"} onClick={() => setTokenId(String(id))}>ITTY #{String(id)}</button>) : <span>{isConnected ? "No active Itties in this wallet yet." : "Connect your wallet to load your collection."}</span>}</div>{Number(hallCredits || 0n) > 0 && <button className="launch-primary" onClick={claimCredit}>Claim a Genesis Itty credit ↗</button>}</div></section>
 
-      <section className="launch-lab launch-section" id="lab"><div className="launch-section-title"><p className="eyebrow">02 · THE LAB</p><h2>Expand the <em>character.</em></h2><p>Each pack starts tradable. Binding it to an Itty burns the pack and permanently attaches that expansion to its DNA.</p></div><div className="lab-grid"><div className="lab-token-card"><img src={`${IMG}itty-sky.webp`} alt="An Itty character concept"/><label htmlFor="token-select">SELECT AN ACTIVE ITTY</label><select id="token-select" value={tokenId} onChange={event => setTokenId(event.target.value)}><option value="">Choose a token…</option>{(ownedIds || []).map(id => <option value={String(id)} key={String(id)}>Itty #{String(id)}</option>)}</select>{selectedId > 0n && <><div className="lab-quick-stats"><span><small>WIN COUNT</small><b>{winCount == null ? "—" : `${winCount} / 52`}</b></span><span><small>RARITY SCORE</small><b>{rarityScore == null ? "—" : amount(rarityScore)}</b></span></div><div className="win-meter"><i style={{ width: `${Math.min(100, Number(winCount || 0) / 52 * 100)}%` }}/></div><button className="launch-secondary full" onClick={applyLabUpdate} disabled={!enabled || Boolean(retired)}>REVAMP / REFRESH LOOK · 50 $KING + 50 $QUEEN</button></>}</div><div className="pack-catalog"><div className="pack-catalog-head"><span>EXPANSION MARKET</span><span>UNBOUND PACKS ARE TRADEABLE</span></div>{expansionInfo.length ? expansionInfo.map(({ id, info }) => <ExpansionCard key={String(id)} id={id} info={info} owned={packsBalances[String(id)] || 0n} attached={(attachedIds || []).some(attached => attached === id)} onBuy={buyPack} onBind={bindPack} canBind={selectedId > 0n && !retired}/>) : <div className="catalog-empty"><span>✳</span><strong>Expansion packs will appear here</strong><small>Culture · Seasonal · Luxury · Collaboration</small><p>{addressesReady ? "No active pack allocations have been published yet." : "Contract addresses are set after Base Sepolia deployment."}</p></div>}</div></div><div className="launch-status" aria-live="polite">{status || (!addressesReady ? "Configuration needed: add contract and $KING / $QUEEN addresses to .env.local after test deployment." : "Connect a Base wallet to interact with your Lab.")}</div></section>
+      <section className="launch-lab launch-section" id="lab"><div className="launch-section-title"><p className="eyebrow">02 · THE LAB</p><h2>Expand the <em>character.</em></h2><p>Each pack starts tradable. Binding it to an Itty burns the pack and permanently attaches that expansion to its DNA.</p></div><div className="lab-grid"><div className="lab-token-card"><img src={`${IMG}itty-sky.webp`} alt="An Itty character concept"/><label htmlFor="token-select">SELECT AN ACTIVE ITTY</label><select id="token-select" value={tokenId} onChange={event => setTokenId(event.target.value)}><option value="">Choose a token…</option>{(ownedIds || []).map(id => <option value={String(id)} key={String(id)}>Itty #{String(id)}</option>)}</select>{selectedId > 0n && <><div className="lab-quick-stats"><span><small>WIN COUNT</small><b>{winCount == null ? "—" : `${winCount} / 52`}</b></span><span><small>RARITY SCORE</small><b>{rarityScore == null ? "—" : amount(rarityScore)}</b></span></div><div className="win-meter"><i style={{ width: `${Math.min(100, Number(winCount || 0) / 52 * 100)}%` }}/></div><button className="launch-secondary full" onClick={applyLabUpdate} disabled={!enabled || Boolean(retired)}>REVAMP / REFRESH LOOK · 50 $KING + 50 $QUEEN</button></>}</div><div className="pack-catalog"><p className="pack-payment-policy"><strong>Community packs · Their token.</strong> Regular packs · KING + QUEEN. Payments go directly to the House treasury. Community-token purchases open after verified Base payment details are published.</p><div className="pack-catalog-head"><span>EXPANSION MARKET</span><span>UNBOUND PACKS ARE TRADEABLE</span></div>{expansionInfo.length ? expansionInfo.map(({ id, info, payment }) => <ExpansionCard key={String(id)} id={id} info={info} payment={payment} canBuy={enabled && isConnected && buyingPack === null} buying={buyingPack === String(id)} owned={packsBalances[String(id)] || 0n} attached={(attachedIds || []).some(attached => attached === id)} onBuy={buyPack} onBind={bindPack} canBind={selectedId > 0n && !retired}/>) : <div className="catalog-empty"><span>✳</span><strong>Expansion packs will appear here</strong><small>Culture · Seasonal · Luxury · Collaboration</small><p>{addressesReady ? "No active pack allocations have been published yet." : "Contract addresses are set after Base Sepolia deployment."}</p></div>}</div></div><div className="launch-status" aria-live="polite">{status || (!addressesReady ? "Configuration needed: add contract and $KING / $QUEEN addresses to .env.local after test deployment." : "Connect a Base wallet to interact with your Lab.")}</div></section>
 
-      {isOperator && <section className="launch-admin launch-section" id="house-admin"><div className="launch-section-title"><p className="eyebrow">HOUSE OPERATIONS · RESTRICTED</p><h2>Run the <em>protocol.</em></h2><p>Operator actions are on-chain and wallet-signed. Only the contract owner can configure House pool mints and new pack definitions.</p></div><div className="admin-grid"><div className="admin-card"><small>COMPETITION OPERATIONS</small><label>Record a verified win<input type="number" min="1" value={tokenId} onChange={event => setTokenId(event.target.value)} placeholder="Itty token ID"/></label><button disabled={!selectedId} onClick={() => ownerAction(coreAddress,coreAbi,"recordWin",[selectedId],"Verified win recorded on Base.")}>RECORD WIN · AUTO RETIRES AT 52</button><label>Grant a Lab revamp pass<input value={grantAddress} onChange={event => setGrantAddress(event.target.value)} placeholder="Holder address"/></label><button disabled={!grantAddress} onClick={() => ownerAction(coreAddress,coreAbi,"grantLabRevampPass",[grantAddress,1n],"One Lab revamp pass granted.")}>GRANT ONE PROMO PASS</button><button onClick={() => runOperatorAction(0n,"createTournament",[6*60*60])}>OPEN 24H TOURNAMENT · 6H REGISTRATION</button></div><div className="admin-card"><small>HOUSE POOL · OWNER ONLY</small><label>Mint a reserved House Itty<input value={houseRecipient} onChange={event => setHouseRecipient(event.target.value)} placeholder="Recipient wallet address"/></label><button disabled={!isContractOwner || !houseRecipient} onClick={() => ownerAction(coreAddress,coreAbi,"mintFromHousePool",[houseRecipient],"House-pool Itty minted.")}>MINT HOUSE POOL TOKEN</button><small>200 reserved tokens · separate from unlimited public supply</small><label>Add a House operator<input value={adminAddress} onChange={event => setAdminAddress(event.target.value)} placeholder="Operator address"/></label><button disabled={!isContractOwner || !adminAddress} onClick={() => ownerAction(coreAddress,coreAbi,"setOperator",[adminAddress,true],"Core operator enabled.")}>AUTHORIZE CORE OPERATOR</button><button disabled={!isContractOwner || !adminAddress} onClick={() => ownerAction(tournamentAddress,tournamentAbi,"setOperator",[adminAddress,true],"Tournament operator enabled.")}>AUTHORIZE TOURNAMENT OPERATOR</button></div><form className="admin-card" onSubmit={submitNewPack}><small>EXPANSION DEFINITIONS · OWNER ONLY</small><label>Pack name<input required value={newPack.name} onChange={event => setNewPack({...newPack,name:event.target.value})} placeholder="Season / culture / luxury pack"/></label><label>Metadata URI<input required value={newPack.uri} onChange={event => setNewPack({...newPack,uri:event.target.value})} placeholder="ipfs://…/metadata.json"/></label><div className="admin-form-row"><label>Rarity weight<input required type="number" min="1" value={newPack.weight} onChange={event => setNewPack({...newPack,weight:event.target.value})}/></label><label>Supply cap<input type="number" min="1" value={newPack.cap} onChange={event => setNewPack({...newPack,cap:event.target.value,luxury:Boolean(event.target.value)})} placeholder="Standard: uncapped"/></label></div><label className="check-label"><input type="checkbox" checked={newPack.luxury} onChange={event => setNewPack({...newPack,luxury:event.target.checked})}/> Luxury pack · 400 $KING + 400 $QUEEN</label><button disabled={!isContractOwner}>CREATE EXPANSION · {newPack.luxury ? "400 + 400" : "150 + 150"} TOKENS</button></form></div><div className="launch-status" aria-live="polite">{status}</div></section>}
+      {isOperator && <section className="launch-admin launch-section" id="house-admin"><div className="launch-section-title"><p className="eyebrow">HOUSE OPERATIONS · RESTRICTED</p><h2>Run the <em>protocol.</em></h2><p>Operator actions are on-chain and wallet-signed. Only the contract owner can configure House pool mints and new pack definitions.</p></div><div className="admin-grid"><div className="admin-card"><small>COMPETITION OPERATIONS</small><label>Record a verified win<input type="number" min="1" value={tokenId} onChange={event => setTokenId(event.target.value)} placeholder="Itty token ID"/></label><button disabled={!selectedId} onClick={() => ownerAction(coreAddress,coreAbi,"recordWin",[selectedId],"Verified win recorded on Base.")}>RECORD WIN · AUTO RETIRES AT 52</button><label>Grant a Lab revamp pass<input value={grantAddress} onChange={event => setGrantAddress(event.target.value)} placeholder="Holder address"/></label><button disabled={!grantAddress} onClick={() => ownerAction(coreAddress,coreAbi,"grantLabRevampPass",[grantAddress,1n],"One Lab revamp pass granted.")}>GRANT ONE PROMO PASS</button><button onClick={() => runOperatorAction(0n,"createTournament",[6*60*60])}>OPEN 24H TOURNAMENT · 6H REGISTRATION</button></div><div className="admin-card"><small>HOUSE POOL · OWNER ONLY</small><label>Mint a reserved House Itty<input value={houseRecipient} onChange={event => setHouseRecipient(event.target.value)} placeholder="Recipient wallet address"/></label><button disabled={!isContractOwner || !houseRecipient} onClick={() => ownerAction(coreAddress,coreAbi,"mintFromHousePool",[houseRecipient],"House-pool Itty minted.")}>MINT HOUSE POOL TOKEN</button><small>200 reserved tokens · separate from unlimited public supply</small><label>Add a House operator<input value={adminAddress} onChange={event => setAdminAddress(event.target.value)} placeholder="Operator address"/></label><button disabled={!isContractOwner || !adminAddress} onClick={() => ownerAction(coreAddress,coreAbi,"setOperator",[adminAddress,true],"Core operator enabled.")}>AUTHORIZE CORE OPERATOR</button><button disabled={!isContractOwner || !adminAddress} onClick={() => ownerAction(tournamentAddress,tournamentAbi,"setOperator",[adminAddress,true],"Tournament operator enabled.")}>AUTHORIZE TOURNAMENT OPERATOR</button></div><form className="admin-card" onSubmit={submitNewPack}><small>EXPANSION DEFINITIONS · OWNER ONLY</small><label>Pack name<input required value={newPack.name} onChange={event => setNewPack({...newPack,name:event.target.value})} placeholder="Season / culture / luxury pack"/></label><label>Metadata URI<input required value={newPack.uri} onChange={event => setNewPack({...newPack,uri:event.target.value})} placeholder="ipfs://…/metadata.json"/></label><div className="admin-form-row"><label>Rarity weight<input required type="number" min="1" value={newPack.weight} onChange={event => setNewPack({...newPack,weight:event.target.value})}/></label><label>Supply cap<input type="number" min="1" value={newPack.cap} onChange={event => setNewPack({...newPack,cap:event.target.value,luxury:Boolean(event.target.value)})} placeholder="Standard: uncapped"/></label></div><label className="check-label"><input type="checkbox" checked={newPack.luxury} onChange={event => setNewPack({...newPack,luxury:event.target.checked})}/> Luxury pack · 400 $KING + 400 $QUEEN</label><button disabled={!isContractOwner}>CREATE EXPANSION · {newPack.luxury ? "400 + 400" : "150 + 150"} TOKENS</button></form><form className="admin-card" onSubmit={submitCommunityPack}><small>COMMUNITY PACK · OWNER ONLY</small>
+<label>Community<select value={newCommunity.community} onChange={e => setNewCommunity({...newCommunity,community:e.target.value})}>{["DOGE","FLOKI","PEPE","SHIBA","TOSHI"].map(name => <option key={name}>{name}</option>)}</select></label>
+<label>Verified Base token address<input required value={newCommunity.token} onChange={e => setNewCommunity({...newCommunity,token:e.target.value,verified:false})} placeholder="0x… ERC-20 on Base"/></label>
+<label>Price in community tokens<input required type="text" inputMode="decimal" pattern="[0-9]+([.][0-9]+)?" value={newCommunity.price} onChange={e => setNewCommunity({...newCommunity,price:e.target.value})} placeholder="Exact token amount"/></label>
+<small>Exact token pricing. A $1 target needs a separately maintained rate; this form does not convert USD.</small>
+<label>Metadata URI<input required value={newCommunity.uri} onChange={e => setNewCommunity({...newCommunity,uri:e.target.value})} placeholder="ipfs://…/metadata.json"/></label>
+<div className="admin-form-row"><label>Rarity weight<input required type="number" min="1" value={newCommunity.weight} onChange={e => setNewCommunity({...newCommunity,weight:e.target.value})}/></label><label>Supply cap<input type="number" min="1" value={newCommunity.cap} onChange={e => setNewCommunity({...newCommunity,cap:e.target.value})} placeholder="Uncapped"/></label></div>
+<label className="check-label"><input type="checkbox" checked={newCommunity.verified} onChange={e => setNewCommunity({...newCommunity,verified:e.target.checked})}/> I verified this community’s official or approved bridged token on Base.</label>
+<button disabled={!isContractOwner || !newCommunity.verified}>CREATE COMMUNITY PACK</button></form></div><div className="launch-status" aria-live="polite">{status}</div></section>}
 
       <section className="launch-gauntlet launch-section" id="gauntlet"><div className="launch-section-title"><p className="eyebrow">03 · COMPETITION</p><h2>The 52-win <em>gauntlet.</em></h2><p>Itties are soulbound throughout the climb. At 52 verified wins, the contract sends the legend to the public, keyless Hall of Fame vault, where it can never re-enter circulation.</p></div><div className="gauntlet-layout"><div className="gauntlet-card"><div className="gauntlet-number">{winCount == null ? "00" : String(winCount).padStart(2, "0")}<small> / 52</small></div><div className="win-meter large"><i style={{ width: `${Math.min(100, Number(winCount || 0) / 52 * 100)}%` }}/></div><p>{retired ? "IMMORTAL · VAULT LOCKED" : selectedId ? `ITTY #${tokenId} · ${Math.max(0, 52 - Number(winCount || 0))} WINS TO RETIREMENT` : "SELECT YOUR ITTY IN THE LAB TO TRACK ITS CLIMB"}</p><div className="gauntlet-history">{logs.length ? logs.map((log, index) => <div key={`${log.hash}-${index}`}><span>WIN #{log.count}</span><time>{new Date(log.time * 1000).toLocaleString()}</time><a target="_blank" rel="noreferrer" href={`https://basescan.org/tx/${log.hash}`}>VIEW ↗</a></div>) : <small>ON-CHAIN WIN HISTORY APPEARS AFTER YOU SELECT AN ITTY.</small>}</div></div><div className="verified-info"><span>01</span><h3>Verified on-chain</h3><p>Authorized tournament operators record wins. The counter only moves forward and can’t be edited down.</p><span>02</span><h3>Automatic retirement</h3><p>At 52 wins, the contract transfers the token to the keyless dead-address vault and credits its holder.</p><span>03</span><h3>Start a new chapter</h3><p>Redeem the credit for a fresh blank genesis Itty and begin again.</p></div></div></section>
 
@@ -252,9 +304,18 @@ export default function Home() {
   </>;
 }
 
-function ExpansionCard({ id, info, owned, attached, canBind, onBuy, onBind }) {
+function ExpansionCard({ id, info, payment, owned, attached, canBind, canBuy, buying, onBuy, onBind }) {
   const [name, uri, kingPrice, queenPrice, weight, cap, minted, active, luxury] = info;
-  return <article className="pack-row"><div className="pack-icon">{luxury ? "✦" : "✳"}</div><div className="pack-copy"><strong>{name}</strong><small>PACK #{String(id)} · {luxury ? "LUXURY / RATIO-CAPPED" : "STANDARD"} · RARITY +{weight}</small><small>{uri}</small></div><div className="pack-prices"><b>{amount(kingPrice)} $KING</b><b>{amount(queenPrice)} $QUEEN</b></div><button className="pack-buy" onClick={() => onBuy(id, info)}>BUY · {Number(owned)}</button>{canBind && Number(owned) > 0 && !attached && <button className="pack-bind" onClick={() => onBind(id)}>BIND TO ITTY</button>}{attached && <span className="bound-label">BOUND DNA</span>}</article>;
+  const community = Boolean(payment && payment[0] !== zeroAddress);
+  const tokens = community ? [payment[0]] : [kingAddress, queenAddress];
+  const tokenReads = useReadContracts({ contracts: tokens.flatMap(token => [
+    { address: token, abi: erc20Abi, functionName: "decimals" },
+    { address: token, abi: erc20Abi, functionName: "symbol" }
+  ]), query: { enabled: Boolean(payment) } });
+  const prices = community ? [payment[1]] : [kingPrice, queenPrice];
+  const metadataReady = prices.every((_, index) => tokenReads.data?.[index * 2]?.status === "success" && tokenReads.data?.[index * 2 + 1]?.status === "success");
+  const soldOut = cap > 0n && minted >= cap;
+  return <article className="pack-row"><div className="pack-icon">{luxury ? "✦" : "✳"}</div><div className="pack-copy"><strong>{name}</strong><small>PACK #{String(id)} · {community ? "COMMUNITY TOKEN" : luxury ? "LUXURY / RATIO-CAPPED" : "KING + QUEEN"} · RARITY +{weight}</small><small>{uri}</small>{community && <a href={`https://basescan.org/token/${payment[0]}`} target="_blank" rel="noreferrer">Payment token on Base ↗</a>}</div><div className="pack-prices">{!payment || !metadataReady ? <small>Payment details unavailable</small> : prices.map((price, index) => <b key={tokens[index]}>{formatUnits(price, tokenReads.data[index * 2].result)} ${tokenReads.data[index * 2 + 1].result}</b>)}</div><button className="pack-buy" disabled={!canBuy || !payment || !metadataReady || !active || soldOut} onClick={() => onBuy(id, payment)}>{buying ? "CONFIRMING…" : soldOut ? "SOLD OUT" : "BUY"} · {Number(owned)}</button>{canBind && Number(owned) > 0 && !attached && <button className="pack-bind" onClick={() => onBind(id)}>BIND TO ITTY</button>}{attached && <span className="bound-label">BOUND DNA</span>}</article>;
 }
 
 function TournamentCard({ id, info, clock, selectedId, onRegister, onOperatorAction, operator }) {

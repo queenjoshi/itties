@@ -46,6 +46,10 @@ export const packsAbi = parseAbi([
   "function activePackIds() view returns (uint256[])",
   "function packInfo(uint256) view returns (string name,string metadataURI,uint256 kingPrice,uint256 queenPrice,uint32 rarityWeight,uint64 supplyCap,uint64 minted,bool active,bool luxury)",
   "function buyExpansion(uint256,uint256)",
+  "function communityPayment(uint256) view returns (address token,uint256 unitPrice)",
+  "function createCommunityPack(string,string,address,uint256,uint32,uint64) returns (uint256)",
+  "function setCommunityPrice(uint256,uint256)",
+  "function buyCommunityExpansion(uint256,uint256,address,uint256)",
   "function balanceOf(address,uint256) view returns (uint256)",
   "function setApprovalForAll(address,bool)",
   "function isApprovedForAll(address,address) view returns (bool)",
@@ -70,6 +74,8 @@ export const tournamentAbi = parseAbi([
 ]);
 
 export const erc20Abi = parseAbi([
+  "function decimals() view returns (uint8)",
+  "function symbol() view returns (string)",
   "function allowance(address,address) view returns (uint256)",
   "function approve(address,uint256) returns (bool)",
   "function balanceOf(address) view returns (uint256)"
