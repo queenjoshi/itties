@@ -1,3 +1,4 @@
+import { basePoseForToken } from "../../../_lib/base-poses";
 import { createPublicClient, http, parseAbi, isAddress } from "viem";
 import { base } from "viem/chains";
 
@@ -36,7 +37,9 @@ export async function GET(request, { params }) {
     const packs = await Promise.all(expansionIds.map(expansionId => client.readContract({ address: packsAddress, abi: packAbi, functionName: "packInfo", args: [expansionId] })));
     const origin = new URL(request.url).origin;
     const renderer = process.env.NEXT_PUBLIC_METADATA_RENDERER_URL?.replace(/\/$/, "");
+    const pose = basePoseForToken(id, coreAddress);
     const attributes = [
+      { trait_type: "Base Pose", value: pose.name },
       { trait_type: "Win Count", value: Number(winCount) },
       { trait_type: "Hall of Fame", value: isRetired },
       { trait_type: "Rarity Score", value: Number(rarityScore) },

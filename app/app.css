@@ -72,3 +72,45 @@ html,body{max-width:100%;overflow-x:clip}body{min-width:320px}main,section,artic
 @media(max-width:900px){.admin-mixer{grid-template-columns:minmax(220px,.75fr) minmax(0,1.25fr);gap:10px}.admin-mixer-controls{padding:11px}.admin-mixer-options{gap:5px}.admin-mixer-option{padding:4px}.admin-mixer-option-art{height:58px}.admin-mixer-group legend{font-size:13px}}
 @media(max-width:760px){.admin-mixer{grid-template-columns:1fr}.admin-mixer-preview{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;justify-items:stretch}.admin-mixer-preview-head{grid-column:1/-1}.admin-mixer-stage{grid-row:2/5;justify-self:center;width:min(100%,280px)}.admin-mixer-caption{align-self:end;padding:10px}.admin-mixer-reset{align-self:start;margin:0 10px}.admin-mixer-controls{padding:14px}.admin-mixer-options{gap:8px}.admin-mixer-option{padding:6px}.admin-mixer-option-art{height:76px}}
 @media(max-width:520px){.admin-mixer-preview{grid-template-columns:minmax(0,1fr) minmax(100px,.75fr);gap:6px}.admin-mixer-stage{width:min(100%,245px)}.admin-mixer-caption strong{font-size:18px}.admin-mixer-caption span{font-size:7px}.admin-mixer-group legend{font-size:14px}.admin-mixer-options{grid-template-columns:repeat(5,minmax(82px,1fr));overflow-x:auto;padding:2px 2px 8px;scroll-snap-type:x proximity}.admin-mixer-option{scroll-snap-align:start}.admin-mixer-option-art{height:74px}.admin-mixer-option-name{font-size:8px}.admin-mixer-controls-foot{align-items:start;flex-direction:column}.admin-mixer-controls-foot p{max-width:none}}
+
+/* Shared canvas coordinates and explicit compositing order for trait layers. */
+.admin-mixer-stage{isolation:isolate}
+.admin-mixer-base{z-index:0}
+.admin-mixer-layer-apparel{z-index:10}
+.admin-mixer-layer-lips{z-index:20}
+.admin-mixer-layer-hair{z-index:30}
+.admin-mixer-hands{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain;pointer-events:none;z-index:40;clip-path:polygon(14% 28%,39% 28%,39% 42%,14% 44%,14% 28%,69% 53%,84% 53%,84% 64%,69% 64%,69% 53%)}
+
+.admin-mixer-hand-left{clip-path:polygon(14% 28%,39% 28%,39% 42%,14% 44%)}
+.admin-mixer-hand-right{clip-path:polygon(69% 53%,84% 53%,84% 64%,69% 64%)}
+
+.admin-mixer-hand-right{clip-path:polygon(76% 52%,99% 52%,99% 67%,76% 67%)}
+
+.admin-mixer-hand-right{clip-path:polygon(69% 53%,84% 53%,84% 64%,69% 64%)}
+
+.base-pose-picker{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;max-width:900px;margin:0 auto 60px}.base-pose-preview{display:grid;justify-items:center;padding:20px;border:1px solid #604477;border-radius:20px;background:radial-gradient(ellipse,#352145,#15101e 72%)}.base-pose-preview>img{width:100%;height:min(60vh,580px);object-fit:contain}.base-pose-preview strong{padding:12px;color:#fff;font-size:20px}.base-pose-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-content:center}.base-pose-options button{min-width:0;padding:12px 8px;border:1px solid #604477;border-radius:14px;color:#fff;background:#20152d;cursor:pointer}.base-pose-options button[aria-pressed=true]{border-color:#eaff3d;box-shadow:0 0 0 2px #eaff3d55}.base-pose-options button:focus-visible{outline:3px solid #53eaff;outline-offset:4px}.base-pose-options img{display:block;width:100%;height:200px;object-fit:contain}.base-pose-options span{display:block;margin-top:12px;font-size:14px}@media(max-width:650px){.base-pose-picker{grid-template-columns:1fr}.base-pose-preview>img{height:48vh}.base-pose-options img{height:140px}}
+.pose-layer-stage{position:relative;width:100%;height:min(60vh,580px)}.pose-layer-stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}.pose-dress-layer{pointer-events:none}.pose-outfit-controls{max-width:900px;margin:0 auto 60px;color:white}.pose-outfit-buttons{display:flex;flex-wrap:wrap;gap:10px}.pose-outfit-buttons button{padding:14px 18px;min-height:44px;border:1px solid #604477;background:#20152d;color:white;border-radius:12px;cursor:pointer}.pose-outfit-buttons button[aria-pressed=true]{border-color:#eaff3d;background:#36301f}.pose-outfit-buttons button:focus-visible{outline:3px solid #53eaff;outline-offset:3px}@media(max-width:650px){.pose-layer-stage{height:48vh}}
+.pose-first-options{max-width:900px;margin:0 auto 60px}.pose-first-options img{height:min(48vh,400px)}.pose-outfit-thumb{position:relative;display:block;width:100%;height:150px;margin-bottom:8px}.pose-outfit-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}.base-pose-picker>.pose-outfit-controls{margin:0;width:100%}.base-pose-picker .pose-outfit-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.pose-change-button{padding:12px 18px;margin-top:8px;border:1px solid #604477;border-radius:10px;background:#20152d;color:white;cursor:pointer}.pose-change-button:focus-visible{outline:3px solid #53eaff;outline-offset:3px}
+
+.arm-trait-thumbnail{display:block;width:100%;height:120px;object-fit:contain;margin-bottom:8px}
+
+/* Trait picker: compact grouped controls, independently sized from the preview. */
+.base-pose-picker{max-width:1120px;grid-template-columns:minmax(280px,.9fr) minmax(0,1.1fr);align-items:start;gap:28px}
+.base-pose-preview{position:sticky;top:76px;align-self:start;padding:18px;overflow:hidden}
+.base-pose-preview .pose-layer-stage{height:clamp(320px,54vh,560px)}
+.base-pose-preview strong{font-size:16px;padding:8px}
+.pose-change-button{margin:0;min-height:42px;font-size:12px}
+.trait-panel-heading{margin-bottom:24px}.trait-panel-heading h2{margin:0 0 6px;font-size:26px;line-height:1.2}.trait-panel-heading p{margin:0;color:#bcaeca;font-size:13px;line-height:1.5}
+.trait-section{min-width:0;margin:0 0 24px;padding:0;border:0}.trait-section legend{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:0;color:#b4a2c2;font:11px 'DM Mono',monospace}.trait-section legend span{color:#fff;font:600 16px Outfit,sans-serif}
+.trait-colours{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.trait-colours button,.trait-arms button,.trait-outfits button{min-width:0;border:1px solid #543c65;border-radius:12px;background:#20152d;color:#eee5f4;cursor:pointer;transition:background .15s,border-color .15s}
+.trait-colours button:hover,.trait-arms button:hover,.trait-outfits button:hover{border-color:#c7a3df;background:#2b1d3b}
+.trait-colours button[aria-pressed=true],.trait-arms button[aria-pressed=true],.trait-outfits button[aria-pressed=true]{border-color:#eaff3d;background:#302d22;box-shadow:inset 0 0 0 1px #eaff3d33}
+.trait-colours button:focus-visible,.trait-arms button:focus-visible,.trait-outfits button:focus-visible{outline:3px solid #53eaff;outline-offset:3px}
+.trait-colours button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px 5px;font-size:11px;line-height:1.3;min-height:84px}
+.trait-swatch{display:block;width:26px;height:26px;border-radius:50%;background:var(--swatch);box-shadow:inset 0 0 0 1px #ffffff55,inset -4px -4px 8px #0002}
+.swatch-yellow{--swatch:#ffda00}.swatch-shiba-orange{--swatch:#ff8517}.swatch-pepe-green{--swatch:#51bc36}.swatch-black{--swatch:#333238}.swatch-red{--swatch:#ed333b}.swatch-blue{--swatch:#2f68f5}.swatch-pink{--swatch:#ff9ecb}.swatch-lavender{--swatch:#c3a2ef}
+.trait-arms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.trait-arms button{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:6px;padding:14px;min-height:76px;text-align:left;font-size:13px}.trait-arms small{font-size:10px;line-height:1.4;color:#c1b1cc}
+.trait-outfits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.trait-outfits button{display:flex;flex-direction:column;padding:8px;text-align:center;overflow:hidden}.trait-outfits .pose-outfit-thumb{height:128px;margin:0 0 8px;border-radius:8px;background:radial-gradient(ellipse,#49305855,#140e1d55)}.trait-card-name{display:flex;align-items:center;justify-content:center;min-height:32px;font-size:11px;line-height:1.4;padding:0 2px}
+@media(max-width:760px){.base-pose-picker{grid-template-columns:1fr;gap:24px}.base-pose-preview{position:static;padding:12px}.base-pose-preview .pose-layer-stage{height:300px}.trait-panel-heading{margin-bottom:20px}.trait-colours button{min-height:78px}.trait-outfits .pose-outfit-thumb{height:150px}}
+@media(max-width:420px){.trait-outfits{grid-template-columns:repeat(2,minmax(0,1fr))}.trait-outfits .pose-outfit-thumb{height:135px}.trait-arms button{padding:11px;font-size:12px}.base-pose-preview .pose-layer-stage{height:260px}}

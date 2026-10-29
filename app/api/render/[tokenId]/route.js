@@ -1,3 +1,4 @@
+import { basePoseForToken } from "../../../_lib/base-poses";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { createPublicClient, http, parseAbi, isAddress } from "viem";
@@ -58,8 +59,9 @@ export async function GET(_request, { params }) {
       client.readContract({ address: coreAddress, abi: coreAbi, functionName: "ownerOf", args: [id] }),
       client.readContract({ address: coreAddress, abi: coreAbi, functionName: "getAttachedExpansions", args: [id] })
     ]);
+    const pose = basePoseForToken(id, coreAddress);
     const [baseBytes, packs] = await Promise.all([
-      readFile(path.join(process.cwd(), "public/assets/itty-sky.webp")),
+      readFile(path.join(process.cwd(), "public/assets/base-poses", pose.file)),
       Promise.all(ids.map(async expansionId => {
         const info = await client.readContract({ address: packsAddress, abi: packAbi, functionName: "packInfo", args: [expansionId] });
         const layer = await resolvePackImage(info[1]);
@@ -69,7 +71,7 @@ export async function GET(_request, { params }) {
     const layers = packs.filter(Boolean);
     const baseData = `data:image/webp;base64,${baseBytes.toString("base64")}`;
     const layerMarkup = layers.map((layer, index) => `<image href="${layer.image}" x="0" y="0" width="1000" height="1000" preserveAspectRatio="xMidYMid meet" opacity=".98"/><text x="44" y="${916 - index * 32}" fill="#f4eeff" font-family="sans-serif" font-size="18">${escapeXml(layer.name)} · RARITY +${layer.rarity}</text>`).join("");
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000" viewBox="0 0 1000 1000"><defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#241035"/><stop offset=".5" stop-color="#301753"/><stop offset="1" stop-color="#111020"/></linearGradient><radialGradient id="glow"><stop stop-color="#b947ed" stop-opacity=".8"/><stop offset="1" stop-color="#b947ed" stop-opacity="0"/></radialGradient></defs><rect width="1000" height="1000" fill="url(#bg)"/><circle cx="500" cy="450" r="460" fill="url(#glow)"/><image href="${baseData}" x="0" y="0" width="1000" height="1000" preserveAspectRatio="xMidYMid slice"/>${layerMarkup}<rect x="18" y="18" width="964" height="964" rx="26" fill="none" stroke="#eaff3d" stroke-opacity=".7" stroke-width="3"/><text x="44" y="64" fill="#eaff3d" font-family="sans-serif" font-size="20" letter-spacing="5">THE ITTIES · HOUSE OF JOSHI</text><text x="44" y="956" fill="#ffffff" font-family="sans-serif" font-size="24">ITTY #${rawId} · ${layers.length} BOUND EXPANSION${layers.length === 1 ? "" : "S"}</text></svg>`;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000" viewBox="0 0 1000 1000"><defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#241035"/><stop offset=".5" stop-color="#301753"/><stop offset="1" stop-color="#111020"/></linearGradient><radialGradient id="glow"><stop stop-color="#b947ed" stop-opacity=".8"/><stop offset="1" stop-color="#b947ed" stop-opacity="0"/></radialGradient></defs><rect width="1000" height="1000" fill="url(#bg)"/><circle cx="500" cy="450" r="460" fill="url(#glow)"/><image href="${baseData}" x="0" y="0" width="1000" height="1000" preserveAspectRatio="xMidYMid meet"/>${layerMarkup}<rect x="18" y="18" width="964" height="964" rx="26" fill="none" stroke="#eaff3d" stroke-opacity=".7" stroke-width="3"/><text x="44" y="64" fill="#eaff3d" font-family="sans-serif" font-size="20" letter-spacing="5">THE ITTIES · HOUSE OF JOSHI</text><text x="44" y="956" fill="#ffffff" font-family="sans-serif" font-size="24">ITTY #${rawId} · ${layers.length} BOUND EXPANSION${layers.length === 1 ? "" : "S"}</text></svg>`;
     return new Response(svg, { headers: { "Content-Type": "image/svg+xml; charset=utf-8", "Cache-Control": "public, s-maxage=30, stale-while-revalidate=300", "X-Itty-Owner": holder.toLowerCase() } });
   } catch {
     return new Response("Token image could not be composed from Base expansion data", { status: 404 });
