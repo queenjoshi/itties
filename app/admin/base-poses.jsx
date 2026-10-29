@@ -44,6 +44,7 @@ export default function BasePoses() {
           <p>{pose ? "STEP 2 OF 2" : "STEP 1 OF 2"}</p>
           <h1>{pose ? <>Choose your <em>layers.</em></> : <>Pick a <em>pose.</em></>}</h1>
           <p>{pose ? `${pose.name} · Select an outfit for this base.` : "Choose your base pencil to see its fitted layers."}</p>
+        <Link href="/admin/regular-traits" className="regular-studio-link">Open regular trait studio ↗</Link>
         </section>
         {!pose ? (
           <section className="base-pose-options pose-first-options" aria-label="Choose base pose">
