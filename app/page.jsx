@@ -219,7 +219,13 @@ export default function Home() {
   const enabled = addressesReady && chainId === base.id;
 
   return <>
-    <header className="launch-nav"><a className="launch-brand" href="#top" aria-label="Itty Bitty home"><img src={`${IMG}itties-mark.svg`} alt=""/><span className="launch-brand-copy"><span>ITTY BITTY</span><small>THE ITTIES</small></span></a><nav aria-label="Main navigation"><a href="#mint">Mint</a><a href="#lab">The Lab</a><a href="#gauntlet">Gauntlet</a><a href="#expansions">Expansions</a><a href="#vault">Hall of Fame</a></nav><div className="launch-wallet"><ConnectButton chainStatus="icon" showBalance={false} accountStatus={{ smallScreen: "avatar", largeScreen: "address" }}/></div></header>
+    <header className="launch-nav"><a className="launch-brand" href="#top" aria-label="Itty Bitty home"><img src={`${IMG}itties-mark.svg`} alt=""/><span className="launch-brand-copy"><span>ITTY BITTY</span><small>THE ITTIES</small></span></a><nav aria-label="Main navigation"><a href="#mint">Mint</a><a href="#lab">The Lab</a><a href="#gauntlet">Gauntlet</a><a href="#expansions">Expansions</a><a href="#vault">Hall of Fame</a></nav><div className="launch-wallet"><ConnectButton.Custom>{({ account, chain, mounted, openConnectModal, openAccountModal, openChainModal }) => {
+      const connected = mounted && account && chain;
+      const wrongNetwork = connected && chain.unsupported;
+      return <button type="button" className="header-wallet-button" onClick={connected ? (wrongNetwork ? openChainModal : openAccountModal) : openConnectModal} aria-label={connected ? (wrongNetwork ? "Switch wallet network" : "Open wallet account") : "Connect wallet"}>
+        {connected ? (wrongNetwork ? "Switch network" : account.displayName) : "Connect Wallet"}
+      </button>;
+    }}</ConnectButton.Custom></div></header>
     <main id="top">
       <section className="launch-hero">
         <div className="launch-hero-copy"><p className="eyebrow"><i/> THE HOUSE OF JOSHI · BASE COLLECTION</p><h1>Blank canvas.<br/><em>Make a legend.</em></h1><p>Meet the bright, odd Itties. Build a character from a blank, then take it on a 52-win climb. Itties are soulbound until they enter the public Hall of Fame vault.</p><div className="launch-actions"><a className="launch-primary" href="#mint">MINT GENESIS · 0.025 ETH ↗</a><a className="launch-secondary" href="#expansions">EXPLORE THE LAB</a></div><div className="launch-stat-row"><span><b>∞</b> PUBLIC SUPPLY</span><span><b>05%</b> SECONDARY ROYALTY</span><span><b>52</b> WINS TO IMMORTALITY</span></div></div>
