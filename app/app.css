@@ -114,3 +114,12 @@ html,body{max-width:100%;overflow-x:clip}body{min-width:320px}main,section,artic
 .trait-outfits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.trait-outfits button{display:flex;flex-direction:column;padding:8px;text-align:center;overflow:hidden}.trait-outfits .pose-outfit-thumb{height:128px;margin:0 0 8px;border-radius:8px;background:radial-gradient(ellipse,#49305855,#140e1d55)}.trait-card-name{display:flex;align-items:center;justify-content:center;min-height:32px;font-size:11px;line-height:1.4;padding:0 2px}
 @media(max-width:760px){.base-pose-picker{grid-template-columns:1fr;gap:24px}.base-pose-preview{position:static;padding:12px}.base-pose-preview .pose-layer-stage{height:300px}.trait-panel-heading{margin-bottom:20px}.trait-colours button{min-height:78px}.trait-outfits .pose-outfit-thumb{height:150px}}
 @media(max-width:420px){.trait-outfits{grid-template-columns:repeat(2,minmax(0,1fr))}.trait-outfits .pose-outfit-thumb{height:135px}.trait-arms button{padding:11px;font-size:12px}.base-pose-preview .pose-layer-stage{height:260px}}
+
+/* The mint intro is already inside a two-column section; do not nest the
+   shared heading/description grid inside its narrower left column. */
+.launch-mint{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(24px,5vw,80px)}
+.launch-mint>.launch-section-title{display:block;min-width:0;margin-bottom:0}
+.launch-mint .launch-section-title h2{max-width:11ch;word-break:normal;overflow-wrap:normal;text-wrap:balance}
+.launch-mint .launch-section-title>p:last-child{max-width:46ch;margin-top:22px}
+.launch-mint>.mint-status-card{min-width:0}
+@media(max-width:900px){.launch-mint{grid-template-columns:1fr;gap:28px}.launch-mint .launch-section-title h2{max-width:18ch}.launch-mint .launch-section-title>p:last-child{max-width:60ch;margin-top:16px}}
