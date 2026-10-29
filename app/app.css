@@ -123,3 +123,17 @@ html,body{max-width:100%;overflow-x:clip}body{min-width:320px}main,section,artic
 .launch-mint .launch-section-title>p:last-child{max-width:46ch;margin-top:22px}
 .launch-mint>.mint-status-card{min-width:0}
 @media(max-width:900px){.launch-mint{grid-template-columns:1fr;gap:28px}.launch-mint .launch-section-title h2{max-width:18ch}.launch-mint .launch-section-title>p:last-child{max-width:60ch;margin-top:16px}}
+
+/* Header layout owns its three slots, including RainbowKit's root wrapper. */
+.launch-nav{grid-template-columns:auto minmax(0,1fr) auto;gap:clamp(18px,2.5vw,40px);min-height:82px;padding:14px clamp(20px,4vw,64px);align-items:center}
+.launch-nav .launch-brand{gap:10px;min-width:0;font-family:Outfit,'DM Sans',sans-serif;font-size:21px;letter-spacing:.065em;line-height:1.05}
+.launch-nav .launch-brand img{flex:none;width:38px;height:38px}
+.launch-nav .launch-brand-copy{display:flex;flex-direction:column;align-items:flex-start;gap:5px;white-space:nowrap}
+.launch-nav .launch-brand-copy small{align-self:auto;margin:0;font:600 8px/1.2 'DM Sans',sans-serif;letter-spacing:.22em}
+.launch-nav nav{display:flex;min-width:0;gap:clamp(14px,2vw,28px);align-items:center;justify-content:center}
+.launch-nav nav a{flex:none;min-height:44px;font:600 13px/1.2 'DM Sans',sans-serif;letter-spacing:0;white-space:nowrap}
+.launch-wallet{display:flex;min-width:136px;align-items:center;justify-content:flex-end}
+.launch-wallet [data-rk] button{min-height:44px!important;font:700 13px/1.2 'DM Sans',sans-serif!important;border-radius:12px!important}
+@media(max-width:1050px){.launch-nav{grid-template-columns:minmax(0,1fr) auto;gap:8px 20px;padding-block:12px}.launch-nav nav{grid-column:1/-1;grid-row:2;order:initial;justify-content:center;gap:28px}.launch-wallet{grid-column:2;grid-row:1}.launch-nav .launch-brand{font-size:20px}}
+@media(max-width:640px){.launch-nav{padding:10px 16px 6px;gap:6px 12px}.launch-nav .launch-brand{font-size:17px;gap:8px}.launch-nav .launch-brand img{width:32px;height:32px}.launch-nav .launch-brand-copy{gap:4px}.launch-nav .launch-brand-copy small{display:block;font-size:6px}.launch-wallet{min-width:104px}.launch-wallet [data-rk] button{min-height:40px!important;font-size:11px!important;padding-inline:10px!important}.launch-nav nav{justify-content:space-between;gap:14px;width:100%;overflow-x:auto}.launch-nav nav a{font-size:11px;min-height:40px}}
+@media(max-width:360px){.launch-nav{padding-inline:12px;gap:6px 8px}.launch-nav .launch-brand{font-size:15px}.launch-nav .launch-brand img{width:28px;height:28px}.launch-wallet{min-width:96px}.launch-nav nav{gap:12px}.launch-nav nav a{font-size:10px}}
