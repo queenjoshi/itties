@@ -40,23 +40,31 @@ export default function BasePoses() {
   const [motion, setMotion] = useState("static");
   const [pattern, setPattern] = useState(null);
   const [colourGroup, setColourGroup] = useState("regular");
-  const [arms, setArms] = useState(true);
+  const [arms, setArms] = useState(false);
   const [gesture, setGesture] = useState("hype");
   const [jewellery, setJewellery] = useState(null);
   const [gender, setGender] = useState(null);
-  const [faces, setFaces] = useState({male:{eyes:1,mouth:0,expression:"hype"},female:{eyes:1,mouth:0,expression:"wide-eyed"}});
-  function startItty(type = null) {
-    setSelected(null);
-    setGender(type);
+  const [faces, setFaces] = useState({male:{eyes:null,mouth:null,expression:null},female:{eyes:null,mouth:null,expression:null}});
+  function resetLayers() {
     setSkin("yellow");
     setEraser("standard-pink");
     setMotion("static");
     setPattern(null);
     setColourGroup("regular");
-    setArms(true);
+    setArms(false);
     setGesture("hype");
     setJewellery(null);
-    setFaces({male:{eyes:1,mouth:0,expression:"hype"},female:{eyes:1,mouth:0,expression:"wide-eyed"}});
+    setFaces({male:{eyes:null,mouth:null,expression:null},female:{eyes:null,mouth:null,expression:null}});
+  }
+  function startItty(type = null) {
+    resetLayers();
+    setSelected(null);
+    setGender(type);
+  }
+  function choosePose(id) {
+    if (id === selected) return;
+    resetLayers();
+    setSelected(id);
   }
   const availableExpressions = gender === "female" ? femaleExpressions : expressions;
   function chooseFace(category,id){setFaces(previous=>({...previous,[gender]:{...previous[gender],[category]:id,expression:null}}));}
@@ -86,7 +94,7 @@ export default function BasePoses() {
         ) : !pose ? (
           <section className="base-pose-options pose-first-options" aria-label="Choose base pose">
             {poses.map(item => (
-              <button key={item.id} type="button" onClick={() => setSelected(item.id)}>
+              <button key={item.id} type="button" onClick={() => choosePose(item.id)}>
                 <img src={`/assets/base-poses/${item.id}.webp?v=clean-edges7`} alt={`Blank yellow pencil in ${item.name} pose`} />
                 <span>{item.name}</span>
               </button>
@@ -104,7 +112,7 @@ export default function BasePoses() {
                 <img style={{zIndex:3}} className="pose-dress-layer" src={`/assets/eraser-bands/${pose.id}/${eraser}.webp?v=2`} alt={erasers.find(([id])=>id===eraser)[1]}/>
                 </div>{["silver-glitter","gold-shimmer"].includes(motion)&&<img className="motion-overlay" src={`/assets/motion-effects/${motion}.webp`} alt={`${motions.find(([id])=>id===motion)[1]} effect`}/>}
               </div>
-              <div className="preview-pose-switch" role="group" aria-label="Change pencil pose">{poses.map(item=><button key={item.id} type="button" aria-pressed={selected===item.id} onClick={()=>setSelected(item.id)}>{item.name}</button>)}</div>
+              <p className="face-expression-note">Changing pose clears all layers so you can start fresh.</p><div className="preview-pose-switch" role="group" aria-label="Change pencil pose">{poses.map(item=><button key={item.id} type="button" aria-pressed={selected===item.id} onClick={()=>choosePose(item.id)}>{item.name}</button>)}</div>
               <strong>{pose.name} · {PENCIL_COLOURS.find(item => item.id === skin).name}{pattern ? ` · ${patterns.find(([id])=>id===pattern)[1]}` : ""}</strong>
               </div><div className="customizer-controls"><h2>{gender === "male" ? "Male" : "Female"} Itty layers</h2><fieldset className="trait-section" style={{ width: "100%", marginTop: 20 }}>
                 <legend>Body colour (skin colour)</legend>
@@ -119,7 +127,7 @@ export default function BasePoses() {
               {[["Jewellery",wearables,jewellery,setJewellery]].map(([title,options,value,setValue])=><fieldset key={title} className="trait-section"><legend>{title}</legend><div className="face-trait-options">{[[null,"None"],...options].map(([id,name])=><button key={id||"none"} type="button" aria-pressed={value===id} onClick={()=>setValue(id)}>{id&&<img src={`/assets/fitted-traits/thumbs/${id}.webp?v=1`} alt=""/>}<span>{name}</span></button>)}</div></fieldset>)}
               <fieldset className="trait-section"><legend>Arms & hands</legend><div className="trait-colours"><button type="button" aria-pressed={!arms} onClick={()=>setArms(false)}>No arms</button>{expressions.map(item=><button type="button" key={item.id} aria-pressed={arms&&gesture===item.id} onClick={()=>{setArms(true);setGesture(item.id);}}>{item.name}</button>)}</div></fieldset>
               <fieldset className="trait-section"><legend>Motion effects</legend><div className="face-trait-options">{motions.map(([id,name])=><button type="button" key={id} aria-pressed={motion===id} onClick={()=>setMotion(id)}>{name}</button>)}</div></fieldset>
-              <button className="pose-change-button" type="button" onClick={() => setSelected(null)}>← Change pose</button>
+              <button className="pose-change-button" type="button" onClick={() => choosePose(null)}>← Change pose</button>
             </div>
           </section>
         )}
