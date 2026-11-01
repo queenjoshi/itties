@@ -1,0 +1,35 @@
+{
+  "poses": [
+    "tilt-left",
+    "tilt-right",
+    "straight"
+  ],
+  "gestures": [
+    "chill",
+    "hype",
+    "fierce",
+    "glitch",
+    "focused",
+    "relaxed"
+  ],
+  "colours": [
+    "yellow",
+    "shiba-orange",
+    "pepe-green",
+    "black",
+    "red",
+    "blue",
+    "pink",
+    "lavender",
+    "classic-red",
+    "polka-dot-pink",
+    "sky-blue-striped",
+    "floral",
+    "stealth-matte-black",
+    "neon-acid"
+  ],
+  "canvas": [
+    1024,
+    1536
+  ]
+}
