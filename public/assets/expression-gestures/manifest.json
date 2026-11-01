@@ -1,0 +1,31 @@
+{
+  "poses": [
+    "tilt-left",
+    "tilt-right",
+    "straight"
+  ],
+  "expressions": [
+    "chill",
+    "hype",
+    "fierce",
+    "glitch",
+    "focused",
+    "relaxed"
+  ],
+  "genders": [
+    "male",
+    "female"
+  ],
+  "canvas": [
+    1024,
+    1536
+  ],
+  "gestures": {
+    "chill": "hands on hips",
+    "hype": "raised palms",
+    "fierce": "raised fist and hip hand",
+    "glitch": "finger guns",
+    "focused": "temple point and hip hand",
+    "relaxed": "hands behind head"
+  }
+}

@@ -6,12 +6,12 @@ import json
 from collections import deque
 
 ROOT=Path(__file__).resolve().parents[1]
-ATLAS=Image.open(ROOT/'artwork-traits/customizer-layer-sources/gestures-artist-v3-four-digits.png').convert('RGBA')
+ATLAS=Image.open(ROOT/'artwork-traits/customizer-layer-sources/gestures-artist-v4-3d.png').convert('RGBA')
 OUT=ROOT/'public/assets/artist-arms'
 PALETTE={'blue':(30,83,226),'red':(220,35,43),'purple':(137,55,200),'yellow':(255,215,0),'orange':(245,124,20),'green':(58,166,57),'black':(26,28,32),'white':(242,243,248),'neon-blue':(0,157,255),'neon-red':(255,22,62),'neon-purple':(213,22,255),'neon-yellow':(238,255,0),'neon-orange':(255,80,0),'neon-green':(85,255,0)}
 GESTURES=['chill','hype','fierce','glitch','focused','relaxed']
-ANCHORS=[((174,242),(363,242),.55),((733,340),(807,340),.53),((1194,242),(1374,257),.55),((192,794),(326,794),.57),((678,742),(858,742),.34),((1165,812),(1364,812),.37)]
-GLOVE_BOXES=[[(80,322,210,455),(320,322,450,455)],[(530,65,750,270),(790,65,1008,270)],[(1090,322,1238,455),(1360,125,1502,270)],[(25,660,205,850),(310,660,511,850)],[(553,590,722,765),(830,820,960,955)],[(0,0,0,0),(0,0,0,0)]]
+ANCHORS=[((174,242),(363,242),.55),((744,360),(800,360),.53),((1194,242),(1374,257),.55),((225,775),(315,775),.57),((678,742),(858,742),.34),((1165,812),(1364,812),.37)]
+GLOVE_BOXES=[[(75,320,230,477),(305,320,468,477)],[(530,60,755,288),(788,60,1010,288)],[(1085,320,1254,477),(1335,110,1510,290)],[(20,640,226,860),(294,635,524,860)],[(550,575,730,786),(808,818,970,970)],[(0,0,0,0),(0,0,0,0)]]
 def save(im,path):
     path.parent.mkdir(parents=True,exist_ok=True);im.save(path,lossless=True,method=0)
 
@@ -24,13 +24,16 @@ for row,pose in enumerate(['tilt-left','tilt-right','straight']):
     for col,name in enumerate(GESTURES):
         left,right,fraction=ANCHORS[col];y=round(top+length*fraction)
         xs=np.where(visible[y])[0];cx=(xs[0]+xs[-1])/2;width=xs[-1]-xs[0];scale=width/170
-        full=Image.new('RGBA',base.size);glove_zone=Image.new('L',base.size);zone_draw=ImageDraw.Draw(glove_zone)
+        full=Image.new('RGBA',base.size);glove_zone=Image.new('L',base.size);join_zone=Image.new('L',base.size);join_draw=ImageDraw.Draw(join_zone)
         for side,(ax,ay) in enumerate([left,right]):
             cellx=col%3*512;celly=col//3*512
             box=(cellx+side*256,celly,cellx+(side+1)*256,celly+512)
-            part=ATLAS.crop(box).resize((round(256*scale),round(512*scale)),Image.Resampling.LANCZOS)
+            if name=='glitch' and side==1:box=(box[0],box[1],box[2]+16,box[3])
+            if name=='focused' and side==0:box=(box[0]+16,box[1],box[2],box[3])
+            part=ATLAS.crop(box).resize((round((box[2]-box[0])*scale),round(512*scale)),Image.Resampling.LANCZOS)
             # Shoulder endpoints are deliberately covered by the barrel silhouette.
             tx=cx+(-1 if side==0 else 1)*width*.40
+            radius=22*scale;join_draw.ellipse((tx-radius,y-radius,tx+radius,y+radius),fill=255)
             px=round(tx-(ax-box[0])*scale);py=round(y-(ay-box[1])*scale)
             limb=Image.new('RGBA',base.size);limb.alpha_composite(part,(px,py))
             limb_zone=Image.new('L',base.size)
@@ -60,6 +63,8 @@ for row,pose in enumerate(['tilt-left','tilt-right','straight']):
                 yy,xx=zip(*points);clean[yy,xx]=True
         front_mask=np.array(Image.fromarray(np.uint8(clean)*255).filter(ImageFilter.MaxFilter(7)))>0
         front_mask &= np.array(glove_zone)>0
+        front_mask &= np.array(join_zone)==0
+        front_mask &= ~((r>90)&(g>55)&(b<g*.8))
         if name=='relaxed':front_mask[:]=False # hands rest behind the head
         front=a.copy();front[:,:,3]=np.where(front_mask,a[:,:,3],0)
         front[front[:,:,3]==0,:3]=0
