@@ -1,0 +1,36 @@
+{
+  "canvas": [
+    1024,
+    1536
+  ],
+  "gestures": [
+    "chill",
+    "hype",
+    "fierce",
+    "glitch",
+    "focused",
+    "relaxed"
+  ],
+  "colours": [
+    "blue",
+    "red",
+    "purple",
+    "yellow",
+    "orange",
+    "green",
+    "black",
+    "white",
+    "neon-blue",
+    "neon-red",
+    "neon-purple",
+    "neon-yellow",
+    "neon-orange",
+    "neon-green"
+  ],
+  "depth": [
+    "rear arms",
+    "barrel and face",
+    "foreground gloves"
+  ],
+  "note": "Relaxed hands remain behind the head."
+}
