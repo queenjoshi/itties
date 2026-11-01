@@ -1,0 +1,24 @@
+{
+  "pose": "tilt-left",
+  "canvas": [
+    1024,
+    1536
+  ],
+  "expressions": [
+    "chill",
+    "hype",
+    "fierce",
+    "glitch",
+    "focused",
+    "relaxed"
+  ],
+  "layers": [
+    "eyes (including eyebrows)",
+    "mouth",
+    "rear arms in selected colour",
+    "foreground gloves"
+  ],
+  "blush": false,
+  "version": 6,
+  "eyebrows": "Original source artwork, original size and colour"
+}
