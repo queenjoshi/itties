@@ -6,15 +6,23 @@ import { STANDARD_SKINS, NEON_SKINS, PENCIL_COLOURS } from "../_lib/skin-colours
 
 const erasers = [["standard-pink","Standard Pink"],["blackout","Blackout"],["crimson-red","Crimson Red"],["electric-blue","Electric Blue"],["gold-metal-band","Gold Metal Band"],["neon-purple","Neon Purple"]];
 const motions = [["static","Static"],["neon-glow-pulse","Neon Glow Pulse"],["silver-glitter","Silver Glitter"],["glitch-overlay","Glitch Overlay"],["floating-bob","Floating Bob"],["gold-shimmer","Gold Shimmer"]];
-const eyeColours = [["blue","Blue"],["green","Green"],["hazel","Hazel"],["brown","Brown"]];
+const eyeNames = ["Confident","Wide-Eyed","Designer Shades","Wild Stare","Cyber Visor","Wink"];
 const mouthNames = {male:["Grin","Smirk","Feral Snarl","Bubble Gum","Gold Grill","Neutral"],female:["Glossy Crimson","Electric Magenta","Dark Velvet Plum","Neon Cyan","Matte Nude","Natural Smile"]};
 const expressions = [
-  {id:"chill",name:"Chill"},
-  {id:"hype",name:"Hype"},
-  {id:"fierce",name:"Fierce"},
-  {id:"glitch",name:"Glitch"},
-  {id:"focused",name:"Focused"},
-  {id:"relaxed",name:"Relaxed"}
+  {id:"chill",name:"Chill",eyes:0,male:1,female:2},
+  {id:"hype",name:"Hype",eyes:1,male:0,female:0},
+  {id:"fierce",name:"Fierce",eyes:3,male:2,female:2},
+  {id:"glitch",name:"Glitch",eyes:4,male:1,female:3},
+  {id:"focused",name:"Focused",eyes:0,male:5,female:4},
+  {id:"relaxed",name:"Relaxed",eyes:5,male:1,female:5}
+];
+const femaleExpressions = [
+  {id:"confident",name:"Confident",eyes:0,female:0},
+  {id:"wide-eyed",name:"Wide-Eyed",eyes:1,female:0},
+  {id:"designer-shades",name:"Designer Shades",eyes:2,female:2},
+  {id:"wild-stare",name:"Wild Stare",eyes:3,female:3},
+  {id:"cyber-visor",name:"Cyber Visor",eyes:4,female:0},
+  {id:"wink",name:"Wink",eyes:5,female:5}
 ];
 const wearables = [["gold-joshi-medallion","Gold Joshi Medallion"],["dollar-chain","Dollar Chain"]];
 const patterns = [["floral","Flowers"],["polka-dots","White polka dots"],["stripes","Stripes"],["matte","Matte"]];
@@ -36,9 +44,7 @@ export default function BasePoses() {
   const [gesture, setGesture] = useState("hype");
   const [jewellery, setJewellery] = useState(null);
   const [gender, setGender] = useState(null);
-  const [faces, setFaces] = useState({male:{mouth:0},female:{mouth:0}});
-  const [eyeColour, setEyeColour] = useState("brown");
-  const [personality, setPersonality] = useState(null);
+  const [faces, setFaces] = useState({male:{eyes:1,mouth:0,expression:"hype"},female:{eyes:1,mouth:0,expression:"wide-eyed"}});
   function startItty(type = null) {
     setSelected(null);
     setGender(type);
@@ -50,11 +56,15 @@ export default function BasePoses() {
     setArms(true);
     setGesture("hype");
     setJewellery(null);
-    setFaces({male:{mouth:0},female:{mouth:0}});
-    setEyeColour("brown");
-    setPersonality(null);
+    setFaces({male:{eyes:1,mouth:0,expression:"hype"},female:{eyes:1,mouth:0,expression:"wide-eyed"}});
   }
-  function chooseFace(category,id){setFaces(previous => ({...previous,[gender]:{...previous[gender],[category]:id}}));}
+  const availableExpressions = gender === "female" ? femaleExpressions : expressions;
+  function chooseFace(category,id){setFaces(previous=>({...previous,[gender]:{...previous[gender],[category]:id,expression:null}}));}
+  function chooseExpression(id){
+    const preset=availableExpressions.find(item=>item.id===id);
+    setFaces(previous=>({...previous,[gender]:preset ? {eyes:preset.eyes,mouth:preset[gender],expression:id} : {eyes:null,mouth:null,expression:null}}));
+    if(preset){setArms(true);setGesture(({confident:"chill","wide-eyed":"hype","designer-shades":"chill","wild-stare":"fierce","cyber-visor":"glitch",wink:"relaxed"})[id] || id);}
+  }
   const pose = poses.find(item => item.id === selected);
   return (
     <main className="admin-review">
@@ -88,10 +98,7 @@ export default function BasePoses() {
               <div className={`pose-layer-stage motion-${motion}`}><div className="character-stack">
                 <img style={{zIndex:2}} src={skin === "yellow" ? `/assets/base-poses/${pose.id}.webp?v=clean-edges7` : `/assets/pencil-skins/${pose.id}-${skin}.webp?v=clean-edges7`} alt={`${PENCIL_COLOURS.find(item => item.id === skin).name} pencil — ${pose.name}`} />
               {arms && <img style={{zIndex:1}} className="pose-dress-layer" src={`/assets/fitted-traits/${pose.id}/gestures/${gesture}-${skin}.webp?v=1`} alt={`${gesture} arms and hands`}/>}
-                <img style={{zIndex:6}} className="pose-dress-layer" src={`/assets/faces/eye-colours/${pose.id}/${eyeColour}.webp?v=position2`} alt={`${eyeColour} eyes`}/>
-                {personality && <img style={{zIndex:6}} className="pose-dress-layer" src={`/assets/faces/personality/${pose.id}/${personality}.webp?v=1`} alt={`${personality} eyebrows and forehead detail`}/>}
-                {faces[gender].mouth !== null && <img style={{zIndex:6}} className="pose-dress-layer" src={`/assets/faces/${gender}/${pose.id}/mouth/${faces[gender].mouth}.webp?v=face-spacing3`} alt={`${gender} mouth — ${mouthNames[gender][faces[gender].mouth]}`}/>}
-
+                {["eyes","mouth"].map(category=>faces[gender][category]!==null&&<img key={category} style={{zIndex:6}} className="pose-dress-layer" src={`/assets/faces/${gender}/${pose.id}/${category}/${faces[gender][category]}.webp?v=face-spacing3`} alt={`${gender} ${category} — ${(category === "eyes" ? eyeNames : mouthNames[gender])[faces[gender][category]]}`}/>)}
                 {[jewellery].filter(Boolean).map(id=><img key={id} style={{zIndex:5}} className="pose-dress-layer" src={`/assets/fitted-traits/${pose.id}/outfits/${id}.webp?v=1`} alt={wearables.find(([key])=>key===id)[1]}/>)}
                 {pattern && <div className={`body-pattern-layer pattern-${pattern}`} role="img" aria-label={`${patterns.find(([id])=>id===pattern)[1]} over ${PENCIL_COLOURS.find(item=>item.id===skin).name}`} style={{"--barrel-mask":`url(/assets/body-patterns/${pose.id}-mask.png)`,"--stripe-image":`url(/assets/body-patterns/${pose.id}-stripes.svg)`,"--body-image":`url(${skin === "yellow" ? `/assets/base-poses/${pose.id}.webp` : `/assets/pencil-skins/${pose.id}-${skin}.webp`})`}}/>}
                 <img style={{zIndex:3}} className="pose-dress-layer" src={`/assets/eraser-bands/${pose.id}/${eraser}.webp?v=2`} alt={erasers.find(([id])=>id===eraser)[1]}/>
@@ -106,8 +113,7 @@ export default function BasePoses() {
                 {colourGroup !== "patterns" ? <div className="trait-colours">{(colourGroup === "neon" ? NEON_SKINS : STANDARD_SKINS).map(({id,name}) => <button type="button" key={id} aria-pressed={skin === id} onClick={() => setSkin(id)}><span className={`trait-swatch swatch-${id}`} aria-hidden="true"/><span>{name}</span></button>)}</div> : <><p className="face-expression-note">Patterns sit over your chosen pencil colour. Preview a pattern without replacing the base.</p><div className="trait-colours">{[[null,"None"],...patterns].map(([id,name])=><button type="button" key={id||"none"} aria-pressed={pattern===id} onClick={()=>setPattern(id)}>{name}</button>)}</div></>}
               </fieldset>
               <fieldset className="trait-section"><legend>Eraser / band</legend><div className="face-trait-options">{erasers.map(([id,name])=><button type="button" key={id} aria-pressed={eraser===id} onClick={()=>setEraser(id)}>{name}</button>)}</div></fieldset>
-              <fieldset className="trait-section"><legend>Eyes · iris colour</legend><p className="face-expression-note">One pair of eyes. Choose your iris colour.</p><div className="eye-colour-options">{eyeColours.map(([id,name])=><button type="button" key={id} aria-pressed={eyeColour===id} onClick={()=>setEyeColour(id)}><img src={`/assets/faces/eye-colours/thumbs/${id}.webp?v=1`} alt=""/><span>{name}</span></button>)}</div></fieldset>
-              <fieldset className="trait-section"><legend>Personality · brows & forehead</legend><p className="face-expression-note">Add character with eyebrows and forehead detail. Your eyes and mouth stay as chosen.</p><div className="face-trait-options"><button type="button" aria-pressed={personality===null} onClick={()=>setPersonality(null)}>None</button>{expressions.map(item=><button key={item.id} type="button" aria-pressed={personality===item.id} onClick={()=>setPersonality(item.id)}><img src={`/assets/faces/personality/thumbs/${item.id}.webp?v=1`} alt=""/><span>{item.name}</span></button>)}</div></fieldset>
+              <fieldset className="trait-section"><legend>{gender === "male" ? "Male" : "Female"} expressions</legend><p className="face-expression-note">Choose a complete expression with coordinated eyes and mouth.</p><div className="face-trait-options"><button type="button" aria-pressed={faces[gender].eyes===null&&faces[gender].mouth===null} onClick={()=>chooseExpression(null)}>Blank face</button>{availableExpressions.map(item=><button key={item.id} type="button" aria-pressed={faces[gender].expression===item.id} onClick={()=>chooseExpression(item.id)}><img src={`/assets/faces/${gender}/${pose.id}/expressions/${item.id}.webp?v=face-spacing3`} alt=""/><span>{item.name}</span></button>)}</div></fieldset>
               <fieldset className="trait-section"><legend>{gender === "male" ? "Male" : "Female"} mouths</legend><div className="face-trait-options"><button type="button" aria-pressed={faces[gender].mouth===null} onClick={()=>chooseFace("mouth",null)}>None</button>{mouthNames[gender].map((name,id)=><button key={id} type="button" aria-pressed={faces[gender].mouth===id} onClick={()=>chooseFace("mouth",id)}><img src={`/assets/faces/${gender}/thumbs/mouth/${id}.webp`} alt=""/><span>{name}</span></button>)}</div></fieldset>
 
               {[["Jewellery",wearables,jewellery,setJewellery]].map(([title,options,value,setValue])=><fieldset key={title} className="trait-section"><legend>{title}</legend><div className="face-trait-options">{[[null,"None"],...options].map(([id,name])=><button key={id||"none"} type="button" aria-pressed={value===id} onClick={()=>setValue(id)}>{id&&<img src={`/assets/fitted-traits/thumbs/${id}.webp?v=1`} alt=""/>}<span>{name}</span></button>)}</div></fieldset>)}
