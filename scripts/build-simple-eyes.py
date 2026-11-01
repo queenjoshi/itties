@@ -32,7 +32,7 @@ for row,pose in enumerate(['tilt-left','tilt-right','straight']):
         item=item.rotate(angle,Image.Resampling.BICUBIC,expand=True)
         layer=Image.new('RGBA',base.size);layer.alpha_composite(item,(round(x-item.width/2),round(y-item.height/2)));return layer
     for i,name in enumerate(COLOURS):
-        item=sprite(eyes,i,2,2);layer=place(item,.23,.94,.52)
+        item=sprite(eyes,i,2,2);layer=place(item,.20,.94,.52)
         save(layer,OUT/f'eye-colours/{pose}/{name}.webp')
         thumb=item.copy();thumb.thumbnail((200,100));save(thumb,OUT/f'eye-colours/thumbs/{name}.webp')
         preview=base.copy();preview.alpha_composite(layer);preview.alpha_composite(Image.open(OUT/f'male/{pose}/mouth/0.webp').convert('RGBA'));preview.thumbnail((300,400));board.alpha_composite(preview,(i*300,row*450+35));draw.text((i*300+12,row*450+10),pose+' / '+name,fill='white')

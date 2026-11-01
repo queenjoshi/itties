@@ -39,6 +39,21 @@ export default function BasePoses() {
   const [faces, setFaces] = useState({male:{mouth:0},female:{mouth:0}});
   const [eyeColour, setEyeColour] = useState("brown");
   const [personality, setPersonality] = useState(null);
+  function startItty(type = null) {
+    setSelected(null);
+    setGender(type);
+    setSkin("yellow");
+    setEraser("standard-pink");
+    setMotion("static");
+    setPattern(null);
+    setColourGroup("regular");
+    setArms(true);
+    setGesture("hype");
+    setJewellery(null);
+    setFaces({male:{mouth:0},female:{mouth:0}});
+    setEyeColour("brown");
+    setPersonality(null);
+  }
   function chooseFace(category,id){setFaces(previous => ({...previous,[gender]:{...previous[gender],[category]:id}}));}
   const pose = poses.find(item => item.id === selected);
   return (
@@ -51,12 +66,12 @@ export default function BasePoses() {
         <section className="admin-review-hero">
           <p>{!gender ? "01 · CHOOSE YOUR ITTY" : !pose ? "02 · CHOOSE YOUR POSE" : "03 · CUSTOMIZE YOUR ITTY"}</p>
           <h1>{!gender ? <>Choose your <em>Itty.</em></> : pose ? <>Change your <em>layers.</em></> : <>Pick a <em>pose.</em></>}</h1>
-          <p>{!gender ? "Start with a male or female Itty to see its trait options." : `${gender === "male" ? "Male" : "Female"} Itty · Choose your lifelong pencil, then build its look with layers.`}</p>
-          {gender && <button type="button" className="pose-change-button" onClick={()=>{setGender(null);setSelected(null);}}>← Change Itty type</button>}
+          <p>{!gender ? "Start with a male or female Itty to see its trait options. Changing Itty type starts a fresh selection." : `${gender === "male" ? "Male" : "Female"} Itty · Choose your lifelong pencil, then build its look with layers.`}</p>
+          {gender && <button type="button" className="pose-change-button" onClick={()=>startItty()}>← Change Itty type</button>}
         </section>
         {!gender ? (
           <section className="itty-type-options" aria-label="Choose male or female Itty">
-            {["male","female"].map(value=><button key={value} type="button" onClick={()=>setGender(value)}><span className="itty-type-step">START HERE</span><strong>{value === "male" ? "Male Itty" : "Female Itty"}</strong><span>Explore {value} traits</span><span aria-hidden="true">Choose Itty →</span></button>)}
+            {["male","female"].map(value=><button key={value} type="button" onClick={()=>startItty(value)}><span className="itty-type-step">START HERE</span><strong>{value === "male" ? "Male Itty" : "Female Itty"}</strong><span>Explore {value} traits</span><span aria-hidden="true">Choose Itty →</span></button>)}
           </section>
         ) : !pose ? (
           <section className="base-pose-options pose-first-options" aria-label="Choose base pose">
@@ -73,7 +88,7 @@ export default function BasePoses() {
               <div className={`pose-layer-stage motion-${motion}`}><div className="character-stack">
                 <img style={{zIndex:2}} src={skin === "yellow" ? `/assets/base-poses/${pose.id}.webp?v=clean-edges7` : `/assets/pencil-skins/${pose.id}-${skin}.webp?v=clean-edges7`} alt={`${PENCIL_COLOURS.find(item => item.id === skin).name} pencil — ${pose.name}`} />
               {arms && <img style={{zIndex:1}} className="pose-dress-layer" src={`/assets/fitted-traits/${pose.id}/gestures/${gesture}-${skin}.webp?v=1`} alt={`${gesture} arms and hands`}/>}
-                <img style={{zIndex:6}} className="pose-dress-layer" src={`/assets/faces/eye-colours/${pose.id}/${eyeColour}.webp?v=1`} alt={`${eyeColour} eyes`}/>
+                <img style={{zIndex:6}} className="pose-dress-layer" src={`/assets/faces/eye-colours/${pose.id}/${eyeColour}.webp?v=position2`} alt={`${eyeColour} eyes`}/>
                 {personality && <img style={{zIndex:6}} className="pose-dress-layer" src={`/assets/faces/personality/${pose.id}/${personality}.webp?v=1`} alt={`${personality} eyebrows and forehead detail`}/>}
                 {faces[gender].mouth !== null && <img style={{zIndex:6}} className="pose-dress-layer" src={`/assets/faces/${gender}/${pose.id}/mouth/${faces[gender].mouth}.webp?v=face-spacing3`} alt={`${gender} mouth — ${mouthNames[gender][faces[gender].mouth]}`}/>}
 
