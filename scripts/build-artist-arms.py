@@ -6,12 +6,12 @@ import json
 from collections import deque
 
 ROOT=Path(__file__).resolve().parents[1]
-ATLAS=Image.open(ROOT/'artwork-traits/customizer-layer-sources/gestures-artist-v2.png').convert('RGBA')
+ATLAS=Image.open(ROOT/'artwork-traits/customizer-layer-sources/gestures-artist-v3-four-digits.png').convert('RGBA')
 OUT=ROOT/'public/assets/artist-arms'
 PALETTE={'blue':(30,83,226),'red':(220,35,43),'purple':(137,55,200),'yellow':(255,215,0),'orange':(245,124,20),'green':(58,166,57),'black':(26,28,32),'white':(242,243,248),'neon-blue':(0,157,255),'neon-red':(255,22,62),'neon-purple':(213,22,255),'neon-yellow':(238,255,0),'neon-orange':(255,80,0),'neon-green':(85,255,0)}
 GESTURES=['chill','hype','fierce','glitch','focused','relaxed']
-ANCHORS=[((174,242),(363,242),.55),((724,319),(812,319),.53),((1194,242),(1374,257),.55),((192,794),(326,794),.57),((678,742),(858,742),.34),((1165,812),(1364,812),.37)]
-GLOVE_BOXES=[[(80,322,210,455),(320,322,450,455)],[(530,65,725,257),(812,65,1008,257)],[(1090,322,1238,455),(1360,125,1502,270)],[(25,660,205,850),(310,660,506,850)],[(553,590,722,765),(830,820,960,955)],[(0,0,0,0),(0,0,0,0)]]
+ANCHORS=[((174,242),(363,242),.55),((733,340),(807,340),.53),((1194,242),(1374,257),.55),((192,794),(326,794),.57),((678,742),(858,742),.34),((1165,812),(1364,812),.37)]
+GLOVE_BOXES=[[(80,322,210,455),(320,322,450,455)],[(530,65,750,270),(790,65,1008,270)],[(1090,322,1238,455),(1360,125,1502,270)],[(25,660,205,850),(310,660,511,850)],[(553,590,722,765),(830,820,960,955)],[(0,0,0,0),(0,0,0,0)]]
 def save(im,path):
     path.parent.mkdir(parents=True,exist_ok=True);im.save(path,lossless=True,method=0)
 
@@ -32,9 +32,17 @@ for row,pose in enumerate(['tilt-left','tilt-right','straight']):
             # Shoulder endpoints are deliberately covered by the barrel silhouette.
             tx=cx+(-1 if side==0 else 1)*width*.40
             px=round(tx-(ax-box[0])*scale);py=round(y-(ay-box[1])*scale)
-            full.alpha_composite(part,(px,py))
+            limb=Image.new('RGBA',base.size);limb.alpha_composite(part,(px,py))
+            limb_zone=Image.new('L',base.size)
             gx,gy,gr,gb=GLOVE_BOXES[col][side]
-            zone_draw.rectangle((round(px+(gx-box[0])*scale),round(py+(gy-box[1])*scale),round(px+(gr-box[0])*scale),round(py+(gb-box[1])*scale)),fill=255)
+            ImageDraw.Draw(limb_zone).rectangle((round(px+(gx-box[0])*scale),round(py+(gy-box[1])*scale),round(px+(gr-box[0])*scale),round(py+(gb-box[1])*scale)),fill=255)
+            if name=='hype':
+                angle=12 if side==0 else -12
+                limb=limb.rotate(angle,Image.Resampling.BICUBIC,center=(tx,y))
+                limb_zone=limb_zone.rotate(angle,Image.Resampling.NEAREST,center=(tx,y))
+            full.alpha_composite(limb)
+            from PIL import ImageChops
+            glove_zone=ImageChops.lighter(glove_zone,limb_zone)
         a=np.array(full);r,g,b=[a[:,:,i].astype(float) for i in range(3)]
         # Neutral white-glove pixels seed a depth mask; expansion includes sculpted
         # dark creases and the antialiased glove outlines without changing artwork.
