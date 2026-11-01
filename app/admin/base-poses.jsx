@@ -16,7 +16,6 @@ const expressions = [
   {id:"focused",name:"Focused"},
   {id:"relaxed",name:"Relaxed"}
 ];
-const clothing = [["puffer-coat","Puffer Coat"],["bomber-jacket","Bomber Jacket"],["denim-vest","Denim Vest"]];
 const wearables = [["gold-joshi-medallion","Gold Joshi Medallion"],["dollar-chain","Dollar Chain"]];
 const patterns = [["floral","Flowers"],["polka-dots","White polka dots"],["stripes","Stripes"],["matte","Matte"]];
 
@@ -35,7 +34,6 @@ export default function BasePoses() {
   const [colourGroup, setColourGroup] = useState("regular");
   const [arms, setArms] = useState(true);
   const [gesture, setGesture] = useState("hype");
-  const [outfit, setOutfit] = useState(null);
   const [jewellery, setJewellery] = useState(null);
   const [gender, setGender] = useState(null);
   const [faces, setFaces] = useState({male:{mouth:0},female:{mouth:0}});
@@ -74,8 +72,7 @@ export default function BasePoses() {
             <div className="base-pose-preview" >
               <div className={`pose-layer-stage motion-${motion}`}><div className="character-stack">
                 <img style={{zIndex:2}} src={skin === "yellow" ? `/assets/base-poses/${pose.id}.webp?v=clean-edges7` : `/assets/pencil-skins/${pose.id}-${skin}.webp?v=clean-edges7`} alt={`${PENCIL_COLOURS.find(item => item.id === skin).name} pencil — ${pose.name}`} />
-              {arms && !["puffer-coat","bomber-jacket"].includes(outfit) && <img style={{zIndex:1}} className="pose-dress-layer" src={`/assets/fitted-traits/${pose.id}/gestures/${gesture}-${skin}.webp?v=1`} alt={`${gesture} arms and hands`}/>}
-                {outfit && <img style={{zIndex:4}} className="pose-dress-layer" src={`/assets/fitted-traits/${pose.id}/outfits/${outfit}.webp?v=1`} alt={clothing.find(([id])=>id===outfit)[1]}/>}
+              {arms && <img style={{zIndex:1}} className="pose-dress-layer" src={`/assets/fitted-traits/${pose.id}/gestures/${gesture}-${skin}.webp?v=1`} alt={`${gesture} arms and hands`}/>}
                 <img style={{zIndex:6}} className="pose-dress-layer" src={`/assets/faces/eye-colours/${pose.id}/${eyeColour}.webp?v=1`} alt={`${eyeColour} eyes`}/>
                 {personality && <img style={{zIndex:6}} className="pose-dress-layer" src={`/assets/faces/personality/${pose.id}/${personality}.webp?v=1`} alt={`${personality} eyebrows and forehead detail`}/>}
                 {faces[gender].mouth !== null && <img style={{zIndex:6}} className="pose-dress-layer" src={`/assets/faces/${gender}/${pose.id}/mouth/${faces[gender].mouth}.webp?v=face-spacing3`} alt={`${gender} mouth — ${mouthNames[gender][faces[gender].mouth]}`}/>}
@@ -98,8 +95,8 @@ export default function BasePoses() {
               <fieldset className="trait-section"><legend>Personality · brows & forehead</legend><p className="face-expression-note">Add character with eyebrows and forehead detail. Your eyes and mouth stay as chosen.</p><div className="face-trait-options"><button type="button" aria-pressed={personality===null} onClick={()=>setPersonality(null)}>None</button>{expressions.map(item=><button key={item.id} type="button" aria-pressed={personality===item.id} onClick={()=>setPersonality(item.id)}><img src={`/assets/faces/personality/thumbs/${item.id}.webp?v=1`} alt=""/><span>{item.name}</span></button>)}</div></fieldset>
               <fieldset className="trait-section"><legend>{gender === "male" ? "Male" : "Female"} mouths</legend><div className="face-trait-options"><button type="button" aria-pressed={faces[gender].mouth===null} onClick={()=>chooseFace("mouth",null)}>None</button>{mouthNames[gender].map((name,id)=><button key={id} type="button" aria-pressed={faces[gender].mouth===id} onClick={()=>chooseFace("mouth",id)}><img src={`/assets/faces/${gender}/thumbs/mouth/${id}.webp`} alt=""/><span>{name}</span></button>)}</div></fieldset>
 
-              {[["Clothing",clothing,outfit,setOutfit],["Jewellery",wearables,jewellery,setJewellery]].map(([title,options,value,setValue])=><fieldset key={title} className="trait-section"><legend>{title}</legend><div className="face-trait-options">{[[null,"None"],...options].map(([id,name])=><button key={id||"none"} type="button" aria-pressed={value===id} onClick={()=>setValue(id)}>{id&&<img src={`/assets/fitted-traits/thumbs/${id}.webp?v=1`} alt=""/>}<span>{name}</span></button>)}</div></fieldset>)}
-              <fieldset className="trait-section"><legend>Arms & hands</legend>{["puffer-coat","bomber-jacket"].includes(outfit) ? <p className="face-expression-note">This jacket includes fitted sleeves and hands. Choose None or Denim Vest to use a different gesture.</p> : <div className="trait-colours"><button type="button" aria-pressed={!arms} onClick={()=>setArms(false)}>No arms</button>{expressions.map(item=><button type="button" key={item.id} aria-pressed={arms&&gesture===item.id} onClick={()=>{setArms(true);setGesture(item.id);}}>{item.name}</button>)}</div>}</fieldset>
+              {[["Jewellery",wearables,jewellery,setJewellery]].map(([title,options,value,setValue])=><fieldset key={title} className="trait-section"><legend>{title}</legend><div className="face-trait-options">{[[null,"None"],...options].map(([id,name])=><button key={id||"none"} type="button" aria-pressed={value===id} onClick={()=>setValue(id)}>{id&&<img src={`/assets/fitted-traits/thumbs/${id}.webp?v=1`} alt=""/>}<span>{name}</span></button>)}</div></fieldset>)}
+              <fieldset className="trait-section"><legend>Arms & hands</legend><div className="trait-colours"><button type="button" aria-pressed={!arms} onClick={()=>setArms(false)}>No arms</button>{expressions.map(item=><button type="button" key={item.id} aria-pressed={arms&&gesture===item.id} onClick={()=>{setArms(true);setGesture(item.id);}}>{item.name}</button>)}</div></fieldset>
               <fieldset className="trait-section"><legend>Motion effects</legend><div className="face-trait-options">{motions.map(([id,name])=><button type="button" key={id} aria-pressed={motion===id} onClick={()=>setMotion(id)}>{name}</button>)}</div></fieldset>
               <button className="pose-change-button" type="button" onClick={() => setSelected(null)}>← Change pose</button>
             </div>
