@@ -228,3 +228,6 @@ html,body{max-width:100%;overflow-x:clip}body{min-width:320px}main,section,artic
 @media(max-width:560px){.itty-type-options{grid-template-columns:1fr;gap:16px}.itty-type-options button{min-height:200px}}
 
 @keyframes itty-silver-glitter{0%,100%{opacity:.6;transform:translateY(3px);filter:brightness(1)}50%{opacity:1;transform:translateY(-4px);filter:brightness(1.5)}}
+
+/* Normalize pose framing outside the animated stack so every trait scales together. */
+.pose-artwork{position:absolute;inset:0;transform:scale(var(--pose-scale,1));transform-origin:center;isolation:isolate}

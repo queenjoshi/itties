@@ -16,9 +16,9 @@ const wearables = [["gold-joshi-medallion","Gold Joshi Medallion"],["dollar-chai
 const patterns = [["floral","Flowers"],["polka-dots","White polka dots"],["stripes","Stripes"],["matte","Matte"]];
 
 const poses = [
-  { id: "tilt-left", name: "Tilt Left" },
-  { id: "tilt-right", name: "Tilt Right" },
-  { id: "straight", name: "Straight" }
+  { id: "tilt-left", name: "Tilt Left", scale: 1 },
+  { id: "tilt-right", name: "Tilt Right", scale: 1377 / 1118 },
+  { id: "straight", name: "Straight", scale: 1377 / 1118 }
 ];
 
 export default function BasePoses() {
@@ -83,7 +83,7 @@ export default function BasePoses() {
           <section className="base-pose-options pose-first-options" aria-label="Choose base pose">
             {poses.map(item => (
               <button key={item.id} type="button" onClick={() => choosePose(item.id)}>
-                <img src={`/assets/base-poses/${item.id}.webp?v=clean-edges8`} alt={`Blank yellow pencil in ${item.name} pose`} />
+                <img style={{transform:`scale(${item.scale})`}} src={`/assets/base-poses/${item.id}.webp?v=clean-edges8`} alt={`Blank yellow pencil in ${item.name} pose`} />
                 <span>{item.name}</span>
               </button>
             ))}
@@ -91,7 +91,7 @@ export default function BasePoses() {
         ) : (
           <section className="customizer-workbench" aria-label={`${pose.name} pencil customizer`}>
             <div className="base-pose-preview" >
-              <div className={`pose-layer-stage motion-${motion}`}><div className="character-stack">
+              <div className={`pose-layer-stage motion-${motion}`} style={{"--pose-scale":pose.scale}}><div className="pose-artwork"><div className="character-stack">
                 <img style={{zIndex:2}} src={skin === "yellow" ? `/assets/base-poses/${pose.id}.webp?v=clean-edges8` : `/assets/pencil-skins/${pose.id}-${skin}.webp?v=clean-edges8`} alt={`${PENCIL_COLOURS.find(item => item.id === skin).name} pencil — ${pose.name}`} />
               {arms && <><img style={{zIndex:1}} className="pose-dress-layer" src={`/assets/clean-gestures/${pose.id}/${gesture}-${skin}.webp?v=2`} alt={`${gesture} arms`}/><img style={{zIndex:7}} className="pose-dress-layer" src={`/assets/clean-gestures/${pose.id}/${gesture}-hands.webp?v=2`} alt={`${gesture} white-gloved hands`}/></>}
                 {["eyes","mouth"].map(category=>faces[gender][category]!==null&&<img key={category} style={{zIndex:6}} className="pose-dress-layer" src={typeof faces[gender][category] === "string" ? `/assets/clean-expressions/${pose.id}/${faces[gender][category]}-${category}.webp?v=1` : `/assets/expression-gestures/${gender}/${pose.id}/manual-mouth/${faces[gender][category]}.webp?v=1`} alt={`${gender} ${category} — ${typeof faces[gender][category] === "string" ? expressions.find(item=>item.id===faces[gender][category]).name : mouthNames[gender][faces[gender][category]]}`}/>)}
@@ -99,7 +99,7 @@ export default function BasePoses() {
                 {pattern && <div className={`body-pattern-layer pattern-${pattern}`} role="img" aria-label={`${patterns.find(([id])=>id===pattern)[1]} over ${PENCIL_COLOURS.find(item=>item.id===skin).name}`} style={{"--barrel-mask":`url(/assets/body-patterns/${pose.id}-mask.png)`,"--stripe-image":`url(/assets/body-patterns/${pose.id}-stripes.svg)`,"--body-image":`url(${skin === "yellow" ? `/assets/base-poses/${pose.id}.webp` : `/assets/pencil-skins/${pose.id}-${skin}.webp`})`}}/>}
                 <img style={{zIndex:3}} className="pose-dress-layer" src={`/assets/eraser-bands/${pose.id}/${eraser}.webp?v=2`} alt={erasers.find(([id])=>id===eraser)[1]}/>
                 </div>{["silver-glitter","gold-shimmer"].includes(motion)&&<img className="motion-overlay" src={`/assets/motion-effects/${motion}.webp`} alt={`${motions.find(([id])=>id===motion)[1]} effect`}/>}
-              </div>
+              </div></div>
               <p className="face-expression-note">Changing pose clears all layers so you can start fresh.</p><div className="preview-pose-switch" role="group" aria-label="Change pencil pose">{poses.map(item=><button key={item.id} type="button" aria-pressed={selected===item.id} onClick={()=>choosePose(item.id)}>{item.name}</button>)}</div>
               <strong>{pose.name} · {PENCIL_COLOURS.find(item => item.id === skin).name}{pattern ? ` · ${patterns.find(([id])=>id===pattern)[1]}` : ""}</strong>
               </div><div className="customizer-controls"><h2>{gender === "male" ? "Male" : "Female"} Itty layers</h2><fieldset className="trait-section" style={{ width: "100%", marginTop: 20 }}>
