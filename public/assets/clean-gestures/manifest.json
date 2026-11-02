@@ -1,0 +1,41 @@
+{
+  "poses": [
+    "tilt-left",
+    "tilt-right",
+    "straight"
+  ],
+  "gestures": [
+    "chill",
+    "hype",
+    "fierce",
+    "glitch",
+    "focused",
+    "relaxed"
+  ],
+  "colours": [
+    "blue",
+    "red",
+    "purple",
+    "yellow",
+    "orange",
+    "green",
+    "black",
+    "white",
+    "neon-blue",
+    "neon-red",
+    "neon-purple",
+    "neon-yellow",
+    "neon-orange",
+    "neon-green"
+  ],
+  "canvas": [
+    1024,
+    1536
+  ],
+  "depth": [
+    "rear arms",
+    "body",
+    "foreground gloves"
+  ],
+  "digits": "three fingers and one thumb"
+}

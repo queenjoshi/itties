@@ -1,0 +1,20 @@
+{
+  "source": "Direct transparent facial art, no extracted yellow body",
+  "poses": [
+    "tilt-left",
+    "tilt-right",
+    "straight"
+  ],
+  "expressions": [
+    "chill",
+    "hype",
+    "fierce",
+    "glitch",
+    "focused",
+    "relaxed"
+  ],
+  "canvas": [
+    1024,
+    1536
+  ]
+}
